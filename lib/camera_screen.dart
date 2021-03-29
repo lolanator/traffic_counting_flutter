@@ -1,10 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:camera/camera.dart';
 
 //My attempt to access the camera in the application --- Jack
+
 
 // A screen that takes in a list of cameras and the Directory to store images.
 class CameraScreen extends StatefulWidget {
@@ -77,6 +79,7 @@ class _CameraScreenState extends State<CameraScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       appBar: AppBar(
         title: Text('Video Camera'),
       ),
@@ -88,6 +91,7 @@ class _CameraScreenState extends State<CameraScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: getImage,
         child: Icon(Icons.add_a_photo),
+
       ),
     );
   }
