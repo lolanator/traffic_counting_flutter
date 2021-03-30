@@ -32,7 +32,7 @@ class _DashBoardState extends State<DashBoard> {
           slivers: <Widget>[
             _buildHeader(),
             _buildRegionTabBar(),
-            _buildStatsTabBar(),
+            //_buildStatsTabBar(),
           ],
         ),
       ),
