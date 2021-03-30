@@ -7,7 +7,6 @@ import 'package:camera/camera.dart';
 
 //My attempt to access the camera in the application --- Jack
 
-
 // A screen that takes in a list of cameras and the Directory to store images.
 class CameraScreen extends StatefulWidget {
   final CameraDescription camera;
@@ -52,7 +51,20 @@ class CameraScreenState extends State<CameraScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Fill this out in the next steps.
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Video Camera'),
+      ),
+      body: Center(
+          //child: _videoStream == null
+          //   ? Text('No image selected.')
+          //  : Image.file(_videoStream),
+          ),
+      floatingActionButton: FloatingActionButton(
+        //  onPressed: getImage,
+        child: Icon(Icons.add_a_photo),
+      ),
+    );
   }
 }
 

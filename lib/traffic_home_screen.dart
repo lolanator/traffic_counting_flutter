@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:traffic_counting_project/camera_screen.dart';
+import 'package:traffic_counting_project/dashboard.dart';
 
 class TrafficHomeScreen extends StatefulWidget {
   @override
@@ -11,6 +12,21 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Navigation"),
+        backgroundColor: Color(0xFF3594DD),
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => DashBoard()),
+            );
+          },
+          child: Icon(
+            Icons.bar_chart, // add custom icons also
+          ),
+        ),
+      ),
       body: Stack(
         children: [
           Container(
