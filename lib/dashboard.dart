@@ -1,42 +1,117 @@
+import 'dart:ui';
+import 'graph_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
+import 'point.dart';
 
 class DashBoard extends StatefulWidget {
   @override
   _DashBoardState createState() => _DashBoardState();
 }
 
-class _DashBoardState extends State<DashBoard> {
+int value = 100;
+
+class _DashBoardState extends State<DashBoard>
+    with SingleTickerProviderStateMixin {
+  BuildContext _context;
+  Animation<double> _animation;
+  double value = 0.0;
+  AnimationController _controller;
+  List<Point> points;
+  Point start;
+  Point end;
+  int _index = 0;
+  int strokes = 50;
+  @override
+  void initState() {
+    super.initState();
+    points = Point.genData(strokes);
+    _controller = AnimationController(
+        duration: Duration(milliseconds: 100), vsync: this);
+    start = points[_index];
+    _controller.forward();
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _controller.reset();
+        ++_index;
+        if (_index == strokes - 1)
+          _controller.stop();
+        else {
+          start = points[_index];
+          end = start;
+        }
+        //do other things as well
+      } else if (status == AnimationStatus.dismissed) {
+        _controller.forward();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    _context = context;
+    _animation = Tween(begin: 0.0, end: 1.0).animate(_controller)
+      ..addListener(() {
+        setState(() {
+          double x = points[_index].x +
+              (points[_index + 1].x - points[_index].x) * _animation.value;
+          double y = points[_index].y +
+              (points[_index + 1].y - points[_index].y) * _animation.value;
+          end = Point(x, y);
+        });
+      });
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.lightBlueAccent,
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            stops: [0.1, 0.4, 0.7, 0.9],
-            colors: [
-              Color(0xFF3594DD),
-              Color(0xFF4563DB),
-              Color(0xFF5036D5),
-              Color(0xFF5B16D0),
-            ],
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              stops: [0.1, 0.4, 0.7, 0.9],
+              colors: [
+                Color(0xFF3594DD),
+                Color(0xFF4563DB),
+                Color(0xFF5036D5),
+                Color(0xFF5B16D0),
+              ],
+            ),
           ),
-        ),
-        child: CustomScrollView(
-          physics: ClampingScrollPhysics(),
-          slivers: <Widget>[
-            _buildHeader(),
-            _buildRegionTabBar(),
-            _buildStatsTabBar(),
-          ],
-        ),
-      ),
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                  flex: 1,
+                  child: CustomScrollView(
+                    anchor: 0.0,
+                    shrinkWrap: false,
+                    physics: ClampingScrollPhysics(),
+                    slivers: <Widget>[
+                      _buildHeader(),
+                      _buildRegionTabBar(),
+                      // _buildStatsTabBar(),
+                    ],
+                  )),
+              Expanded(
+                  flex: 9,
+                  child: Container(
+                    width: vw(.9),
+                    child: CustomPaint(
+                      painter: GraphPainter(points, _index, start, end),
+                      size: Size(vw(.9), vh(0)),
+                    ),
+                  )),
+            ],
+          )),
     );
+  }
+
+  double vw(double ratio) {
+    return MediaQuery.of(_context).size.width * ratio;
+  }
+
+  double vh(double ratio) {
+    return MediaQuery.of(_context).size.height * ratio;
   }
 
   SliverPadding _buildHeader() {
@@ -57,6 +132,7 @@ class _DashBoardState extends State<DashBoard> {
     );
   }
 
+  void setColor(Container c, int colo) {}
   SliverToBoxAdapter _buildRegionTabBar() {
     return SliverToBoxAdapter(
       child: DefaultTabController(
@@ -78,16 +154,20 @@ class _DashBoardState extends State<DashBoard> {
               Text('Cars'),
               Text('Buses'),
               Text('Trucks'),
-              Text('bicycles'),
+              Text('Bicycles'),
             ],
-            onTap: (index) {},
+            onTap: (index) {
+              setState(() {});
+            },
           ),
         ),
       ),
     );
 
-    SliverPadding _buildStatsTabBar() {
-      return SliverPadding();
-    }
+    // SliverPadding _buildStatsTabBar() {
+    //   return SliverPadding();
+    // }
   }
+
+  // ------------------------------------------------------Michael
 }
