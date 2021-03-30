@@ -78,6 +78,7 @@ class _DashBoardState extends State<DashBoard>
               ],
             ),
           ),
+
           child: Column(
             children: <Widget>[
               Expanded(
@@ -103,6 +104,7 @@ class _DashBoardState extends State<DashBoard>
                   )),
             ],
           )),
+
     );
   }
 
