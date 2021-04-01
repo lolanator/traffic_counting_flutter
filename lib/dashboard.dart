@@ -1,4 +1,6 @@
 import 'dart:ui';
+import 'package:flutter/rendering.dart';
+
 import 'graph_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
@@ -9,38 +11,35 @@ class DashBoard extends StatefulWidget {
   _DashBoardState createState() => _DashBoardState();
 }
 
-int value = 100;
-
 class _DashBoardState extends State<DashBoard>
     with SingleTickerProviderStateMixin {
   BuildContext _context;
   Animation<double> _animation;
-  double value = 0.0;
   AnimationController _controller;
   List<Point> points;
   Point start;
   Point end;
   int _index = 0;
-  int strokes = 50;
+  int strokes = 20;
   @override
   void initState() {
     super.initState();
     points = Point.genData(strokes);
-    _controller = AnimationController(
-        duration: Duration(milliseconds: 100), vsync: this);
+    _controller =
+        AnimationController(duration: Duration(milliseconds: 100), vsync: this);
     start = points[_index];
     _controller.forward();
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         _controller.reset();
         ++_index;
-        if (_index == strokes - 1)
+        if (_index >= strokes - 1) {
           _controller.stop();
-        else {
+          _index = strokes - 1;
+        } else {
           start = points[_index];
           end = start;
         }
-        //do other things as well
       } else if (status == AnimationStatus.dismissed) {
         _controller.forward();
       }
@@ -78,11 +77,10 @@ class _DashBoardState extends State<DashBoard>
               ],
             ),
           ),
-
           child: Column(
             children: <Widget>[
-              Expanded(
-                  flex: 1,
+              Flexible(
+                  
                   child: CustomScrollView(
                     anchor: 0.0,
                     shrinkWrap: false,
@@ -93,18 +91,17 @@ class _DashBoardState extends State<DashBoard>
                       // _buildStatsTabBar(),
                     ],
                   )),
-              Expanded(
-                  flex: 9,
-                  child: Container(
-                    width: vw(.9),
+                  Container(
+                    alignment: Alignment.center,
+                    height: vh(.8),
+                    width: vw(.8),
                     child: CustomPaint(
-                      painter: GraphPainter(points, _index, start, end),
-                      size: Size(vw(.9), vh(0)),
+                      painter: GraphPainter(points, _index, start, end, strokes),
+                      size: Size(vw(.9), vh(.8)),
                     ),
-                  )),
+                  ),
             ],
           )),
-
     );
   }
 
