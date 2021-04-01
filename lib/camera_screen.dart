@@ -2,10 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:camera/camera.dart';
 
 /*
-
 //Camera Screen attempt, opens camera/ photo library on press, errors in retrieving file once video selected.
 
 class CameraScreen extends StatefulWidget {
