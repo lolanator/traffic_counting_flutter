@@ -1,111 +1,115 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-
 import 'package:image_picker/image_picker.dart';
 import 'package:camera/camera.dart';
 
-//My attempt to access the camera in the application --- Jack
+/*
 
-// A screen that takes in a list of cameras and the Directory to store images.
+//Camera Screen attempt, opens camera/ photo library on press, errors in retrieving file once video selected.
+
 class CameraScreen extends StatefulWidget {
-  final CameraDescription camera;
-
-  const CameraScreen({
-    Key key,
-    @required this.camera,
-  }) : super(key: key);
-
-  @override
-  CameraScreenState createState() => CameraScreenState();
-}
-
-class CameraScreenState extends State<CameraScreen> {
-  // Add two variables to the state class to store the CameraController and
-  // the Future.
-  CameraController _controller;
-  Future<void> _initializeControllerFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    // To display the current output from the camera,
-    // create a CameraController.
-    _controller = CameraController(
-      // Get a specific camera from the list of available cameras.
-      widget.camera,
-      // Define the resolution to use.
-      ResolutionPreset.medium,
-    );
-
-    // Next, initialize the controller. This returns a Future.
-    _initializeControllerFuture = _controller.initialize();
-  }
-
-  @override
-  void dispose() {
-    // Dispose of the controller when the widget is disposed.
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Video Camera'),
-      ),
-      body: Center(
-          //child: _videoStream == null
-          //   ? Text('No image selected.')
-          //  : Image.file(_videoStream),
-          ),
-      floatingActionButton: FloatingActionButton(
-        //  onPressed: getImage,
-        child: Icon(Icons.add_a_photo),
-      ),
-    );
-  }
-}
-
-//Below is my original attempt to access the camera --- Jack
-
-/*class CameraScreen extends StatefulWidget {
   @override
   _CameraScreenState createState() => _CameraScreenState();
 }
 
 class _CameraScreenState extends State<CameraScreen> {
-
-  File _videoStream;
+  File _video;
   final picker = ImagePicker();
 
-  Future getImage() async {
+  Future videoFromCamera() async {
     final pickedFile = await picker.getVideo(source: ImageSource.camera);
 
     setState(() {
-        _videoStream = File(pickedFile.path);
+      if (pickedFile != null) {
+        _video = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
     });
   }
 
+  Future videoFromGallery() async {
+    final pickedFile = await picker.getVideo(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        _video = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  void _showPicker(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  new ListTile(
+                      leading: new Icon(Icons.photo_library),
+                      title: new Text('Choose from Photo Library'),
+                      onTap: () {
+                        videoFromGallery();
+                        Navigator.of(context).pop();
+                      }),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text('Use Camera'),
+                    onTap: () {
+                      videoFromCamera();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       appBar: AppBar(
-        title: Text('Video Camera'),
+        title: Text('Video '),
       ),
       body: Center(
-        child: _videoStream == null
-            ? Text('No image selected.')
-            : Image.file(_videoStream),
+        child: _video == null
+            ? Text('No video selected')
+            : Image.file(_video),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: getImage,
+        onPressed: () {
+          _showPicker(context);
+        },
+        tooltip: 'Pick Video',
         child: Icon(Icons.add_a_photo),
-
       ),
     );
   }
 }
- */
+*/
+
+// Temporary stand-in screen until camera can be implemented fully without errors.
+class CameraScreen extends StatefulWidget {
+  @override
+  _CameraScreenState createState() => _CameraScreenState();
+}
+
+class _CameraScreenState extends State<CameraScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Camera Screen"),
+        backgroundColor: Colors.red,
+      ),
+      backgroundColor: Colors.lightGreen,
+    );
+  }
+}
+
