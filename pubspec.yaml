@@ -32,6 +32,9 @@ dependencies:
   #adds image_picker as a dependency
   image_picker: ^0.7.3
 
+  #adds video_player as a dependency
+  video_player: ^0.11.1+2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
