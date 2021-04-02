@@ -14,7 +14,8 @@ class GraphPainter extends CustomPainter {
   double _t;
   int _strokes;
   String _chartTitle;
-  GraphPainter(this._points, this._strokes, this._t, this._bezierpoints, this._chartTitle, this._chartTimes);
+  GraphPainter(this._points, this._strokes, this._t, this._bezierpoints,
+      this._chartTitle, this._chartTimes);
   Offset _getCubicBezier(Offset p0, Offset p1, Offset p2, Offset p3, double t) {
     double u = 1 - t;
     double uu = u * u;
@@ -27,8 +28,8 @@ class GraphPainter extends CustomPainter {
   void _drawCurve(List<Offset> points, Canvas canvas, Size size, Paint paint) {
     Color prevColor = paint.color;
     double prevStrokeWidth = paint.strokeWidth;
+    paint.strokeWidth = 2;
     paint.color = Colors.white;
-    paint.strokeWidth = 3;
     _len = _bezierpoints.length;
     //draw the curve
     Offset p1;
@@ -53,12 +54,12 @@ class GraphPainter extends CustomPainter {
           true,
           paint);
     }
-    if (end != _strokes - 2 ) {
+    if (end != _strokes - 2) {
       Bezier b = _bezierpoints[_len - 1];
       p1 = b.p0;
       p1 = Offset(_left + p1.dx / _strokes * _width,
           _top + (_strokes - p1.dy) / _strokes * _height);
-      for (double t = 0; t <= _t; t += 0.005) {
+      for (double t = 0; t <= _t; t += 0.01) {
         Offset p2 = _getCubicBezier(b.p0, b.p1, b.p2, b.p3, t);
         p2 = Offset(_left + p2.dx / _strokes * _width,
             _top + (_strokes - p2.dy) / _strokes * _height);
@@ -127,7 +128,7 @@ class GraphPainter extends CustomPainter {
     ui.ParagraphBuilder pb;
     ui.ParagraphStyle ps;
     ui.ParagraphConstraints pc;
-    ui.Paragraph par;   
+    ui.Paragraph par;
     Offset off;
     for (int i = 0; i < _strokes; i += 2) {
       //draw the horizontal times

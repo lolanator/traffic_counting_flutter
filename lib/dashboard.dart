@@ -1,10 +1,10 @@
 import 'dart:ui';
+import 'dart:math';
 import 'package:flutter/rendering.dart';
 import 'bezier.dart';
 import 'graph_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
-import 'point.dart';
 
 class DashBoard extends StatefulWidget {
   @override
@@ -23,7 +23,7 @@ class _DashBoardState extends State<DashBoard>
   int strokes = 20;
   Offset _prev, _curr, _next;
   double _dx1 = 0, _dy1 = 0, _dx2, _dy2, _m;
-  static final double _f0 = .2, _f1 = .9;
+  static final double _f0 = .3, _f1 = .5;
   double _t = 0;
   List<String> _titles = <String>[
     "Cars Passed Vs Time",
@@ -35,12 +35,12 @@ class _DashBoardState extends State<DashBoard>
   @override
   void initState() {
     super.initState();
-    points = Point.genData(strokes);
+    points = _genData(strokes);
     _chartTimes = _genTimes(strokes);
     _bezierpoints = [];
     _addBezierCurve();
     _controller =
-        AnimationController(duration: Duration(milliseconds: 100), vsync: this);
+        AnimationController(duration: Duration(milliseconds: 300), vsync: this);
     _controller.forward();
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
@@ -168,6 +168,7 @@ class _DashBoardState extends State<DashBoard>
               setState(() {
                 _titleIndex = index;
                 _controller.stop();
+                points = _genData(strokes);
                 _bezierpoints = [];
                 _index = 1;
                 _dx1 = _dy1 = 0;
@@ -216,5 +217,13 @@ class _DashBoardState extends State<DashBoard>
     for (int i = 0; i < numOfDates; i++)
       result.add("00:${(59 * (i / (numOfDates + 1))).toInt()}");
     return result;
+  }
+
+  static List<Offset> _genData(int strokes) {
+    List<Offset> points = [];
+    final rng = Random();
+    for (var i = 0; i < strokes; i++)
+      points.add(Offset(i.toDouble(), 1 + rng.nextDouble() * (strokes - 1)));
+    return points;
   }
 }
