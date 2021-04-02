@@ -12,10 +12,8 @@ class GraphPainter extends CustomPainter {
   int _len;
   double _t;
   int _strokes;
-  // GraphPainter(
-  //     this._points, this._index, this._start, this._end, this._strokes);
-
-  GraphPainter(this._points, this._strokes, this._t, this._bezierpoints);
+  String _chartTitle;
+  GraphPainter(this._points, this._strokes, this._t, this._bezierpoints, this._chartTitle);
   Offset _getCubicBezier(Offset p0, Offset p1, Offset p2, Offset p3, double t) {
     double u = 1 - t;
     double uu = u * u;
@@ -210,7 +208,7 @@ class GraphPainter extends CustomPainter {
     _drawCurve(_points, canvas, size, paint);
 
     //draw the label on the graph
-    _drawLabel("CAR TRAFFIC", size, canvas, paint);
+    _drawLabel(_chartTitle, size, canvas, paint);
   }
 
   @override

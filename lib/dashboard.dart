@@ -22,12 +22,18 @@ class _DashBoardState extends State<DashBoard>
   int strokes = 20;
   Offset _prev, _curr, _next;
   double _dx1 = 0, _dy1 = 0, _dx2, _dy2, _m;
-  static final double _f0 = .3, _f1 = .6;
+  static final double _f0 = .2, _f1 = .9;
   double _t = 0;
+  List<String> _titles = <String>[
+    "Cars Passed Vs Time",
+    "Bussed Passed Vs Time",
+    "Trucks Passed Vs Time",
+        "Bicycles Passed Vs Time"
+  ];
+  int _titleIndex = 0;
   @override
   void initState() {
     super.initState();
-
     points = Point.genData(strokes);
     _bezierpoints = [];
     _addBezierCurve();
@@ -38,7 +44,7 @@ class _DashBoardState extends State<DashBoard>
       if (status == AnimationStatus.completed) {
         _controller.reset();
         ++_index;
-      
+
         if (_index >= strokes - 1) {
           _controller.stop();
           _index = strokes - 1;
@@ -96,7 +102,8 @@ class _DashBoardState extends State<DashBoard>
                 height: vh(.8),
                 width: vw(.8),
                 child: CustomPaint(
-                  painter: GraphPainter(points, strokes, _t, _bezierpoints),
+                  painter: GraphPainter(
+                      points, strokes, _t, _bezierpoints, _titles[_titleIndex]),
                   size: Size(vw(.9), vh(.8)),
                 ),
               ),
@@ -156,7 +163,9 @@ class _DashBoardState extends State<DashBoard>
               Text('Bicycles'),
             ],
             onTap: (index) {
-              setState(() {});
+              setState(() {
+                _titleIndex = index;
+              });
             },
           ),
         ),
