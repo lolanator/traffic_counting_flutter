@@ -53,7 +53,7 @@ class GraphPainter extends CustomPainter {
           true,
           paint);
     }
-    if (end != _strokes - 2) {
+    if (end != _strokes - 2 ) {
       Bezier b = _bezierpoints[_len - 1];
       p1 = b.p0;
       p1 = Offset(_left + p1.dx / _strokes * _width,
@@ -127,7 +127,7 @@ class GraphPainter extends CustomPainter {
     ui.ParagraphBuilder pb;
     ui.ParagraphStyle ps;
     ui.ParagraphConstraints pc;
-    ui.Paragraph par;
+    ui.Paragraph par;   
     Offset off;
     for (int i = 0; i < _strokes; i += 2) {
       //draw the horizontal times

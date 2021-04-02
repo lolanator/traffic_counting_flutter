@@ -27,7 +27,7 @@ class _DashBoardState extends State<DashBoard>
   double _t = 0;
   List<String> _titles = <String>[
     "Cars Passed Vs Time",
-    "Bussed Passed Vs Time",
+    "Buses Passed Vs Time",
     "Trucks Passed Vs Time",
     "Bicycles Passed Vs Time"
   ];
@@ -167,6 +167,14 @@ class _DashBoardState extends State<DashBoard>
             onTap: (index) {
               setState(() {
                 _titleIndex = index;
+                _controller.stop();
+                _bezierpoints = [];
+                _index = 1;
+                _dx1 = _dy1 = 0;
+                _t = 0;
+                _addBezierCurve();
+                _controller.reset();
+                _controller.forward();
               });
             },
           ),
@@ -190,7 +198,6 @@ class _DashBoardState extends State<DashBoard>
     _prev = points.length > 0 ? points[_index - 1] : null;
     _curr = points.length > 1 ? points[_index] : null;
     _next = points.length > 2 ? points[_index + 1] : null;
-
     if (_next != null) {
       _m = _gradient(_prev, _next);
       _dx2 = (_next - _prev).dx * -_f0;
