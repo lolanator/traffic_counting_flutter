@@ -1,6 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/rendering.dart';
-
+import 'bezier.dart';
 import 'graph_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
@@ -16,29 +16,34 @@ class _DashBoardState extends State<DashBoard>
   BuildContext _context;
   Animation<double> _animation;
   AnimationController _controller;
-  List<Point> points;
-  Point start;
-  Point end;
-  int _index = 0;
+  List<Offset> points;
+  List<Bezier> _bezierpoints;
+  int _index = 1;
   int strokes = 20;
+  Offset _prev, _curr, _next;
+  double _dx1 = 0, _dy1 = 0, _dx2, _dy2, _m;
+  static final double _f0 = .3, _f1 = .6;
+  double _t = 0;
   @override
   void initState() {
     super.initState();
+
     points = Point.genData(strokes);
+    _bezierpoints = [];
+    _addBezierCurve();
     _controller =
         AnimationController(duration: Duration(milliseconds: 100), vsync: this);
-    start = points[_index];
     _controller.forward();
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         _controller.reset();
         ++_index;
+      
         if (_index >= strokes - 1) {
           _controller.stop();
           _index = strokes - 1;
         } else {
-          start = points[_index];
-          end = start;
+          _addBezierCurve();
         }
       } else if (status == AnimationStatus.dismissed) {
         _controller.forward();
@@ -52,11 +57,7 @@ class _DashBoardState extends State<DashBoard>
     _animation = Tween(begin: 0.0, end: 1.0).animate(_controller)
       ..addListener(() {
         setState(() {
-          double x = points[_index].x +
-              (points[_index + 1].x - points[_index].x) * _animation.value;
-          double y = points[_index].y +
-              (points[_index + 1].y - points[_index].y) * _animation.value;
-          end = Point(x, y);
+          _t = _animation.value;
         });
       });
     return Scaffold(
@@ -80,26 +81,25 @@ class _DashBoardState extends State<DashBoard>
           child: Column(
             children: <Widget>[
               Flexible(
-                  
                   child: CustomScrollView(
-                    anchor: 0.0,
-                    shrinkWrap: false,
-                    physics: ClampingScrollPhysics(),
-                    slivers: <Widget>[
-                      _buildHeader(),
-                      _buildRegionTabBar(),
-                      // _buildStatsTabBar(),
-                    ],
-                  )),
-                  Container(
-                    alignment: Alignment.center,
-                    height: vh(.8),
-                    width: vw(.8),
-                    child: CustomPaint(
-                      painter: GraphPainter(points, _index, start, end, strokes),
-                      size: Size(vw(.9), vh(.8)),
-                    ),
-                  ),
+                anchor: 0.0,
+                shrinkWrap: false,
+                physics: ClampingScrollPhysics(),
+                slivers: <Widget>[
+                  _buildHeader(),
+                  _buildRegionTabBar(),
+                  // _buildStatsTabBar(),
+                ],
+              )),
+              Container(
+                alignment: Alignment.center,
+                height: vh(.8),
+                width: vw(.8),
+                child: CustomPaint(
+                  painter: GraphPainter(points, strokes, _t, _bezierpoints),
+                  size: Size(vw(.9), vh(.8)),
+                ),
+              ),
             ],
           )),
     );
@@ -169,4 +169,27 @@ class _DashBoardState extends State<DashBoard>
   }
 
   // ------------------------------------------------------Michael
+  //
+  double _gradient(Offset a, Offset b) {
+    Offset c = b - a;
+    return c.dy / c.dx;
+  }
+
+  void _addBezierCurve() {
+    _prev = points.length > 0 ? points[_index - 1] : null;
+    _curr = points.length > 1 ? points[_index] : null;
+    _next = points.length > 2 ? points[_index + 1] : null;
+
+    if (_next != null) {
+      _m = _gradient(_prev, _next);
+      _dx2 = (_next - _prev).dx * -_f0;
+      _dy2 = _dx2 * _m * _f1;
+    } else {
+      _dx2 = _dy2 = 0;
+    }
+    _bezierpoints.add(Bezier(
+        _prev, _prev - Offset(_dx1, _dy1), _curr + Offset(_dx2, _dy2), _curr));
+    _dx1 = _dx2;
+    _dy1 = _dy2;
+  }
 }

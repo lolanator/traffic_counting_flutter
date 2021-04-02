@@ -1,20 +1,22 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
-import 'dart:math';
-import 'point.dart';
+import 'bezier.dart';
 
 class GraphPainter extends CustomPainter {
-  List<Point> _points;
-  double _left, _top, _width, _height, _len;
-  double value;
-  Point pos;
-  int _index;
-  Point _start, _end;
+  List<Offset> _points;
+  List<Bezier> _bezierpoints;
+  List<Offset> drawnPoints = [];
+  double _left, _top, _width, _height;
+  int _len;
+  double _t;
   int _strokes;
-  GraphPainter(
-      this._points, this._index, this._start, this._end, this._strokes);
+  // GraphPainter(
+  //     this._points, this._index, this._start, this._end, this._strokes);
 
-  Offset _getBezier(Offset p0, Offset p1, Offset p2, Offset p3, double t) {
+  GraphPainter(this._points, this._strokes, this._t, this._bezierpoints);
+  Offset _getCubicBezier(Offset p0, Offset p1, Offset p2, Offset p3, double t) {
     double u = 1 - t;
     double uu = u * u;
     double uuu = u * u * u;
@@ -23,25 +25,48 @@ class GraphPainter extends CustomPainter {
     return (p0 * uuu) + (p1 * 3 * uu * t) + (p2 * 3 * u * tt) + (p3 * ttt);
   }
 
-  void _drawCurve(List<Point> points, Canvas canvas, Size size, Paint paint) {
-    _len = points.length.toDouble();
+  void _drawCurve(List<Offset> points, Canvas canvas, Size size, Paint paint) {
     Color prevColor = paint.color;
     double prevStrokeWidth = paint.strokeWidth;
     paint.color = Colors.white;
     paint.strokeWidth = 3;
-    for (var i = 0; i <= _index; i++) {
-      if ((i + 1) > _index) break;
-      Offset p1 = Offset(_left + i / _len * _width,
-          _top + (_len - points[i].y) / _len * _height);
-      Offset p2 = Offset(_left + (i + 1) / _len * _width,
-          _top + (_len - points[i + 1].y) / _len * _height);
-      canvas.drawLine(p1, p2, paint);
+    _len = _bezierpoints.length;
+    //draw the curve
+    Offset p1;
+    final double radius = 10;
+    int end = (_len == _strokes - 2) ? _len : _len - 1;
+    for (int i = 0; i < end; i++) {
+      Bezier b = _bezierpoints[i];
+      p1 = b.p0;
+      p1 = Offset(_left + p1.dx / _strokes * _width,
+          _top + (_strokes - p1.dy) / _strokes * _height);
+      for (double t = 0; t <= 1.0; t += 0.01) {
+        Offset p2 = _getCubicBezier(b.p0, b.p1, b.p2, b.p3, t);
+        p2 = Offset(_left + p2.dx / _strokes * _width,
+            _top + (_strokes - p2.dy) / _strokes * _height);
+        canvas.drawLine(p1, p2, paint);
+        p1 = p2;
+      }
+      canvas.drawArc(
+          Rect.fromLTWH(p1.dx - radius, p1.dy - radius, radius * 2, radius * 2),
+          0,
+          pi * 2.0,
+          true,
+          paint);
     }
-    Offset p1 = Offset(_left + _start.x / _len * _width,
-        _top + (_len - _start.y) / _len * _height);
-    Offset p2 = Offset(_left + _end.x / _len * _width,
-        _top + (_len - _end.y) / _len * _height);
-    canvas.drawLine(p1, p2, paint);
+    if (end != _strokes - 2) {
+      Bezier b = _bezierpoints[_len - 1];
+      p1 = b.p0;
+      p1 = Offset(_left + p1.dx / _strokes * _width,
+          _top + (_strokes - p1.dy) / _strokes * _height);
+      for (double t = 0; t <= _t; t += 0.005) {
+        Offset p2 = _getCubicBezier(b.p0, b.p1, b.p2, b.p3, t);
+        p2 = Offset(_left + p2.dx / _strokes * _width,
+            _top + (_strokes - p2.dy) / _strokes * _height);
+        canvas.drawLine(p1, p2, paint);
+        p1 = p2;
+      }
+    }
     paint.color = prevColor;
     paint.strokeWidth = prevStrokeWidth;
   }
@@ -156,7 +181,6 @@ class GraphPainter extends CustomPainter {
     paint.style = prevStyle;
     paint.color = prevColor;
   }
-
 
   @override
   void paint(Canvas canvas, Size size) {

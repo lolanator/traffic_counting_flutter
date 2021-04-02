@@ -1,16 +1,14 @@
 import 'dart:math';
 
+import 'package:flutter/painting.dart';
+
 class Point {
-  double x;
-  double y;
-
-  Point(this.x, this.y);
-
-static List<Point> genData(int strokes) {
-    List<Point> points = [];
+  
+static List<Offset> genData(int strokes) {
+    List<Offset> points = [];
     var rng = Random();
     for (var i = 0; i < strokes; i++)
-      points.add(Point(i.toDouble(), rng.nextDouble() * strokes));
+      points.add(Offset(i.toDouble(), rng.nextDouble() * strokes));
     return points;
   }
 }
