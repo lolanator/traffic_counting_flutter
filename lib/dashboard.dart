@@ -18,6 +18,7 @@ class _DashBoardState extends State<DashBoard>
   AnimationController _controller;
   List<Offset> points;
   List<Bezier> _bezierpoints;
+  List<String> _chartTimes;
   int _index = 1;
   int strokes = 20;
   Offset _prev, _curr, _next;
@@ -28,13 +29,14 @@ class _DashBoardState extends State<DashBoard>
     "Cars Passed Vs Time",
     "Bussed Passed Vs Time",
     "Trucks Passed Vs Time",
-        "Bicycles Passed Vs Time"
+    "Bicycles Passed Vs Time"
   ];
   int _titleIndex = 0;
   @override
   void initState() {
     super.initState();
     points = Point.genData(strokes);
+    _chartTimes = _genTimes(strokes);
     _bezierpoints = [];
     _addBezierCurve();
     _controller =
@@ -102,8 +104,8 @@ class _DashBoardState extends State<DashBoard>
                 height: vh(.8),
                 width: vw(.8),
                 child: CustomPaint(
-                  painter: GraphPainter(
-                      points, strokes, _t, _bezierpoints, _titles[_titleIndex]),
+                  painter: GraphPainter(points, strokes, _t, _bezierpoints,
+                      _titles[_titleIndex], _chartTimes),
                   size: Size(vw(.9), vh(.8)),
                 ),
               ),
@@ -200,5 +202,12 @@ class _DashBoardState extends State<DashBoard>
         _prev, _prev - Offset(_dx1, _dy1), _curr + Offset(_dx2, _dy2), _curr));
     _dx1 = _dx2;
     _dy1 = _dy2;
+  }
+
+  List<String> _genTimes(int numOfDates) {
+    List<String> result = [];
+    for (int i = 0; i < numOfDates; i++)
+      result.add("00:${(59 * (i / (numOfDates + 1))).toInt()}");
+    return result;
   }
 }

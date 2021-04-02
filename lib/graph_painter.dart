@@ -8,12 +8,13 @@ class GraphPainter extends CustomPainter {
   List<Offset> _points;
   List<Bezier> _bezierpoints;
   List<Offset> drawnPoints = [];
+  List<String> _chartTimes;
   double _left, _top, _width, _height;
   int _len;
   double _t;
   int _strokes;
   String _chartTitle;
-  GraphPainter(this._points, this._strokes, this._t, this._bezierpoints, this._chartTitle);
+  GraphPainter(this._points, this._strokes, this._t, this._bezierpoints, this._chartTitle, this._chartTimes);
   Offset _getCubicBezier(Offset p0, Offset p1, Offset p2, Offset p3, double t) {
     double u = 1 - t;
     double uu = u * u;
@@ -129,11 +130,11 @@ class GraphPainter extends CustomPainter {
     ui.Paragraph par;
     Offset off;
     for (int i = 0; i < _strokes; i += 2) {
-      //draw the horizontal numbers
+      //draw the horizontal times
       ps = ui.ParagraphStyle(textAlign: TextAlign.center, fontSize: fontSize);
       pb = ui.ParagraphBuilder(ps);
       pb.pushStyle(ui.TextStyle(color: Colors.white));
-      pb.addText("$i");
+      pb.addText(_chartTimes[i]);
       pc = ui.ParagraphConstraints(width: 300);
       par = pb.build();
       par.layout(pc);
