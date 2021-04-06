@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:traffic_counting_project/camera_screen.dart';
 import 'package:traffic_counting_project/dashboard.dart';
+import 'package:traffic_counting_project/loading_screen.dart';
 
 class TrafficHomeScreen extends StatefulWidget {
   @override
