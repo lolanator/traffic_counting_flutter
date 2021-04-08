@@ -11,7 +11,7 @@ class CameraScreen extends StatefulWidget {
 }
 
 class _CameraScreenState extends State<CameraScreen> {
-  File _video;
+  File _galleryVideo;
   File _cameraVideo;
 
   ImagePicker picker = ImagePicker();
@@ -23,9 +23,9 @@ class _CameraScreenState extends State<CameraScreen> {
   _pickVideoFromGallery() async {
     PickedFile pickedFile = await picker.getVideo(source: ImageSource.gallery);
 
-    _video = File(pickedFile.path);
+    _galleryVideo = File(pickedFile.path);
 
-    _videoPlayerController = VideoPlayerController.file(_video)
+    _videoPlayerController = VideoPlayerController.file(_galleryVideo)
       ..initialize().then((_) {
         setState(() {});
         _videoPlayerController.play();
@@ -57,7 +57,7 @@ class _CameraScreenState extends State<CameraScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: <Widget>[
-                if (_video != null)
+                if (_galleryVideo != null)
                   _videoPlayerController.value.initialized
                       ? AspectRatio(
                     aspectRatio: _videoPlayerController.value.aspectRatio,
