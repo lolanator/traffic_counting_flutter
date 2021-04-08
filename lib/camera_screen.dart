@@ -20,7 +20,7 @@ class _CameraScreenState extends State<CameraScreen> {
   VideoPlayerController _cameraVideoPlayerController;
 
   // This funcion will helps you to pick a Video File
-  _pickVideo() async {
+  _pickVideoFromGallery() async {
     PickedFile pickedFile = await picker.getVideo(source: ImageSource.gallery);
 
     _video = File(pickedFile.path);
@@ -71,7 +71,7 @@ class _CameraScreenState extends State<CameraScreen> {
                   ),
                 ElevatedButton(
                   onPressed: () {
-                    _pickVideo();
+                    _pickVideoFromCamera();
                   },
                   child: Icon(Icons.photo_camera),
                 ),
@@ -90,7 +90,7 @@ class _CameraScreenState extends State<CameraScreen> {
                   ),
                 ElevatedButton(
                   onPressed: () {
-                    _pickVideoFromCamera();
+                    _pickVideoFromGallery();
                   },
                   child: Icon(Icons.photo_library),
                 )
