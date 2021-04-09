@@ -32,6 +32,9 @@ dependencies:
   #adds image_picker as a dependency
   image_picker: ^0.7.3
 
+  #adds fonts dependency
+  google_fonts: ^2.0.0
+
   #adds video_player as a dependency
   video_player: ^0.11.1+2
 
@@ -57,6 +60,9 @@ flutter:
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
+
+  assets:
+    - google_fonts/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
