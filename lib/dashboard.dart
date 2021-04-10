@@ -88,27 +88,31 @@ class _DashBoardState extends State<DashBoard>
           ),
           child: Column(
             children: <Widget>[
-              Flexible(
+              Expanded(
+                  flex: 1,
                   child: CustomScrollView(
-                anchor: 0.0,
-                shrinkWrap: false,
-                physics: ClampingScrollPhysics(),
-                slivers: <Widget>[
-                  _buildHeader(),
-                  _buildRegionTabBar(),
-                  // _buildStatsTabBar(),
-                ],
-              )),
-              Container(
-                alignment: Alignment.center,
-                height: vh(.8),
-                width: vw(.8),
-                child: CustomPaint(
-                  painter: GraphPainter(points, strokes, _t, _bezierpoints,
-                      _titles[_titleIndex], _chartTimes),
-                  size: Size(vw(.9), vh(.8)),
+                    anchor: 0.0,
+                    shrinkWrap: false,
+                    physics: ClampingScrollPhysics(),
+                    slivers: <Widget>[
+                      _buildHeader(),
+                      _buildRegionTabBar(),
+                      // _buildStatsTabBar(),
+                    ],
+                  )),
+              Expanded(
+                flex: 4,
+                child: Container(
+                  alignment: Alignment.center,
+                  height: vh(.8),
+                  width: vw(.8),
+                  child: CustomPaint(
+                    painter: GraphPainter(points, strokes, _t, _bezierpoints,
+                        _titles[_titleIndex], _chartTimes),
+                    size: Size(vw(.9), vh(.5)),
+                  ),
                 ),
-              ),
+              )
             ],
           )),
     );

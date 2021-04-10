@@ -45,6 +45,15 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> {
               ),
             ),
           ),
+          Container(
+            height: MediaQuery.of(context).size.width * .2,
+            alignment: Alignment.center,
+            child: Text(
+              "Application Name",
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.white, fontSize: 30),
+            ),
+          ),
           Center(
             child: Container(
               height: 200,
