@@ -49,7 +49,7 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> {
             height: MediaQuery.of(context).size.width * .2,
             alignment: Alignment.center,
             child: Text(
-              "Application Name",
+              "Countify",
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.white, fontSize: 30),
             ),
