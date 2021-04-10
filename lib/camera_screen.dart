@@ -19,7 +19,7 @@ class _CameraScreenState extends State<CameraScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    controller = VideoPlayerController.asset("assets/DemoVid.MOV");
+    controller = VideoPlayerController.asset("assets/results.mp4");
     initializeVideoPlayerFuture = controller.initialize();
     controller.setLooping(false);
     controller.setVolume(1.0);
