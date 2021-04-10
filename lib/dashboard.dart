@@ -40,34 +40,32 @@ class _DashBoardState extends State<DashBoard>
     _bezierpoints = [];
     _addBezierCurve();
     _controller =
-        AnimationController(duration: Duration(milliseconds: 300), vsync: this);
-    _controller.forward();
-    _controller.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        _controller.reset();
-        ++_index;
-
-        if (_index >= strokes - 1) {
-          _controller.stop();
-          _index = strokes - 1;
-        } else {
-          _addBezierCurve();
-        }
-      } else if (status == AnimationStatus.dismissed) {
-        _controller.forward();
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    _context = context;
+        AnimationController(duration: Duration(seconds: 1), vsync: this);
     _animation = Tween(begin: 0.0, end: 1.0).animate(_controller)
       ..addListener(() {
         setState(() {
           _t = _animation.value;
         });
+      })
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          _controller.stop();
+        } else if (status == AnimationStatus.dismissed) {
+          _controller.forward();
+        }
       });
+      _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _context = context;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.lightBlueAccent,
@@ -107,8 +105,15 @@ class _DashBoardState extends State<DashBoard>
                   height: vh(.8),
                   width: vw(.8),
                   child: CustomPaint(
-                    painter: GraphPainter(points, strokes, _t, _bezierpoints,
-                        _titles[_titleIndex], _chartTimes),
+                    painter: GraphPainter.drawBarChart(<Offset>[
+                      Offset(0, 13),
+                      Offset(0, 7),
+                      Offset(0, 10),
+                      Offset(0, 5)
+                    ], strokes, _t),
+
+                    // GraphPainter(points, strokes, _t, _bezierpoints,
+                    //     _titles[_titleIndex], _chartTimes),
                     size: Size(vw(.9), vh(.5)),
                   ),
                 ),
