@@ -3,8 +3,11 @@
 <plist version="1.0">
 <dict>
 
-    <key>NSCameraUsageDescription</key>
-    <string>Explanation on why the camera access is needed.</string>
+   <key>NSPhotoLibraryUsageDescription</key>
+   <string>Can I use the PhotoLibrary please?</string><key>NSMicrophoneUsageDescription</key>
+   <string>Can I use the mic please?</string>
+   <key>NSCameraUsageDescription</key>
+   <string>Can I use camera please?</string>
 
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
