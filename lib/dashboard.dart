@@ -1,8 +1,11 @@
-import 'dart:ui';
+import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'graph_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
+import 'dart:typed_data';
+
 class DashBoard extends StatefulWidget {
   @override
   _DashBoardState createState() => _DashBoardState();
@@ -16,11 +19,20 @@ class _DashBoardState extends State<DashBoard>
   List<Offset> points;
   int strokes = 20;
   double _t = 0;
-  List<Vehicle> vehicles  = [Vehicle.CAR, Vehicle.BICYCLE, Vehicle.BUS, Vehicle.ALL];
+  List<ui.Image> _images = [];
+  List<Vehicle> vehicles = [
+    Vehicle.CAR,
+    Vehicle.BICYCLE,
+    Vehicle.BUS,
+    Vehicle.ALL
+  ];
   Vehicle currVehicle = Vehicle.CAR;
   @override
   void initState() {
     super.initState();
+    _loadImages("car.png");
+    _loadImages("bike.png");
+    _loadImages("school-bus.png");
     _controller =
         AnimationController(duration: Duration(seconds: 1), vsync: this);
     _animation = Tween(begin: 0.0, end: 1.0).animate(_controller)
@@ -37,6 +49,14 @@ class _DashBoardState extends State<DashBoard>
         }
       });
     _controller.forward();
+  }
+
+  void _loadImages(String filename) async {
+    ByteData bd = await rootBundle.load(filename);
+    final Uint8List bytes = Uint8List.view(bd.buffer);
+    final ui.Codec codec = await ui.instantiateImageCodec(bytes);
+    final ui.Image image = (await codec.getNextFrame()).image;
+    setState(() => _images.add(image));
   }
 
   @override
@@ -91,7 +111,7 @@ class _DashBoardState extends State<DashBoard>
                       Offset(0, 13),
                       Offset(0, 7),
                       Offset(0, 10),
-                    ], strokes, _t, currVehicle),
+                    ], strokes, _t, currVehicle, _images),
 
                     // GraphPainter(points, strokes, _t, _bezierpoints,
                     //     _titles[_titleIndex], _chartTimes),
