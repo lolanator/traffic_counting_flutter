@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
 import 'package:traffic_counting_project/dashboard.dart';
+import 'package:traffic_counting_project/loading_screen.dart';
+
 
 class CameraScreen extends StatefulWidget {
   CameraScreen() : super();
@@ -64,7 +66,8 @@ class _CameraScreenState extends State<CameraScreen> {
               Future.delayed(Duration(seconds: 27), () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => DashBoard()),
+                  MaterialPageRoute(builder: (context) => LoadingScreen()),
+
                 );
               });
             }
