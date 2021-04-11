@@ -14,8 +14,13 @@ class GraphPainter extends CustomPainter {
   double _t;
   int _strokes;
   String _chartTitle;
+  Vehicle _vehicle;
+  List<String> _titles = <String>["Cars", "Bicycles", "Buses"];
   GraphPainter(this._points, this._strokes, this._t, this._bezierpoints,
       this._chartTitle, this._chartTimes);
+
+  GraphPainter.drawBarChart(
+      this._points, this._strokes, this._t, this._vehicle);
   Offset _getCubicBezier(Offset p0, Offset p1, Offset p2, Offset p3, double t) {
     double u = 1 - t;
     double uu = u * u;
@@ -124,26 +129,14 @@ class GraphPainter extends CustomPainter {
   }
 
   void _drawNumbers(Canvas canvas, Paint paint, double offset) {
-    final double fontSize = 23;
+    final double fontSize = _width / 4 * .2;
     ui.ParagraphBuilder pb;
     ui.ParagraphStyle ps;
     ui.ParagraphConstraints pc;
     ui.Paragraph par;
     Offset off;
+    //draw the vertical numbers
     for (int i = 0; i < _strokes; i += 2) {
-      //draw the horizontal times
-      ps = ui.ParagraphStyle(textAlign: TextAlign.center, fontSize: fontSize);
-      pb = ui.ParagraphBuilder(ps);
-      pb.pushStyle(ui.TextStyle(color: Colors.white));
-      pb.addText(_chartTimes[i]);
-      pc = ui.ParagraphConstraints(width: 300);
-      par = pb.build();
-      par.layout(pc);
-      double leftOffset = _left + _width / _strokes * i - par.width / 2;
-      off = Offset(leftOffset, _top + _height + offset);
-      canvas.drawParagraph(par, off);
-
-      //draw the vertical numbers
       ps = ui.ParagraphStyle(textAlign: TextAlign.right, fontSize: fontSize);
       pb = ui.ParagraphBuilder(ps);
       pb.pushStyle(ui.TextStyle(color: Colors.white));
@@ -155,6 +148,61 @@ class GraphPainter extends CustomPainter {
       off = Offset(_left - offset - par.width, topOffset);
       canvas.drawParagraph(par, off);
     }
+
+    int vehicle;
+    switch (_vehicle) {
+      case Vehicle.CAR:
+        vehicle = 0;
+        break;
+      case Vehicle.BICYCLE:
+        vehicle = 1;
+        break;
+      case Vehicle.BUS:
+        vehicle = 2;
+        break;
+      case Vehicle.ALL:
+        for (int i = 0; i < _titles.length; i++) {
+          pc = ui.ParagraphConstraints(width: 300);
+          ps = ui.ParagraphStyle(
+              textAlign: TextAlign.center, fontSize: fontSize);
+          pb = ui.ParagraphBuilder(ps);
+          pb.pushStyle(ui.TextStyle(color: Colors.white));
+          pb.addText(_titles[i]);
+          par = pb.build();
+          par.layout(pc);
+          double leftOffset =
+              _left + _width / (_titles.length + 1) * (i + 1) - par.width / 2;
+          off = Offset(leftOffset, _top + _height + offset);
+          canvas.drawParagraph(par, off);
+        }
+        return;
+    }
+    pc = ui.ParagraphConstraints(width: 300);
+    ps = ui.ParagraphStyle(textAlign: TextAlign.center, fontSize: fontSize);
+    pb = ui.ParagraphBuilder(ps);
+    pb.pushStyle(ui.TextStyle(color: Colors.white));
+    pb.addText(_titles[vehicle]);
+    par = pb.build();
+    par.layout(pc);
+    double leftOffset =
+        _left + _width / (_titles.length + 1) * (vehicle + 1) - par.width / 2;
+    off = Offset(leftOffset, _top + _height + offset);
+    canvas.drawParagraph(par, off);
+
+    // draw the horizontal labels
+    // for (int i = 1; i < _titles.length + 1; i++) {
+    //   ps = ui.ParagraphStyle(textAlign: TextAlign.center, fontSize: fontSize);
+    //   pb = ui.ParagraphBuilder(ps);
+    //   pb.pushStyle(ui.TextStyle(color: Colors.white));
+    //   pb.addText(_titles[i - 1]);
+    //   pc = ui.ParagraphConstraints(width: 300);
+    //   par = pb.build();
+    //   par.layout(pc);
+    //   double leftOffset =
+    //       _left + _width / (_titles.length + 1) * i - par.width / 2;
+    //   off = Offset(leftOffset, _top + _height + offset);
+    //   canvas.drawParagraph(par, off);
+    // }
   }
 
   _drawAxesMarks(Canvas canvas, Paint paint, double offset) {
@@ -182,6 +230,43 @@ class GraphPainter extends CustomPainter {
     paint.color = prevColor;
   }
 
+  _drawBarChart(Canvas canvas, Size size, Paint paint) {
+    Color prevColor = paint.color;
+    paint.color = Colors.white;
+    double barWidth = size.width * .1;
+
+    int vehicle;
+    switch (_vehicle) {
+      case Vehicle.CAR:
+        vehicle = 0;
+        break;
+      case Vehicle.BICYCLE:
+        vehicle = 1;
+        break;
+      case Vehicle.BUS:
+        vehicle = 2;
+        break;
+      case Vehicle.ALL:
+        for (int i = 0; i < _points.length; i++) {
+          double left =
+              _left + _width / (_points.length + 1) * (i + 1) - barWidth / 2;
+          double height = (_height * _points[i].dy / _strokes) * _t;
+          double top = _top + _height - height;
+          Rect r = Rect.fromLTWH(left, top, barWidth, height);
+          canvas.drawRect(r, paint);
+        }
+
+        return;
+    }
+    double left =
+        _left + _width / (_points.length + 1) * (vehicle + 1) - barWidth / 2;
+    double height = (_height * _points[vehicle].dy / _strokes) * _t;
+    double top = _top + _height - height;
+    Rect r = Rect.fromLTWH(left, top, barWidth, height);
+    canvas.drawRect(r, paint);
+    paint.color = prevColor;
+  }
+
   @override
   void paint(Canvas canvas, Size size) {
     _left = size.width * .1;
@@ -206,11 +291,14 @@ class GraphPainter extends CustomPainter {
     //draw the guiding lines on the graph
     _drawGuidingLines(canvas, size, paint);
 
+    // draw the bar chart
+    _drawBarChart(canvas, size, paint);
+
     //draw the graph curve
-    _drawCurve(_points, canvas, size, paint);
+    // _drawCurve(_points, canvas, size, paint);
 
     //draw the label on the graph
-    _drawLabel(_chartTitle, size, canvas, paint);
+    // _drawLabel(_chartTitle, size, canvas, paint);
   }
 
   @override
@@ -218,3 +306,5 @@ class GraphPainter extends CustomPainter {
     return true;
   }
 }
+
+enum Vehicle { CAR, BICYCLE, BUS, ALL }

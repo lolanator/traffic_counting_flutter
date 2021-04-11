@@ -62,6 +62,7 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> {
               textAlign: TextAlign.center,
               style: TextStyle(
                   color: Colors.white, fontSize: 30, fontFamily: "Ubuntu"),
+
             ),
           ),
           Center(
@@ -91,6 +92,7 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> {
                   ),
                   Column(
                     children: <Widget>[
+
                       TweenAnimationBuilder(
                         child: Padding(
                           padding: EdgeInsets.only(left: 40.25, top: 20),
@@ -102,6 +104,7 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> {
                               borderRadius: BorderRadius.circular(100.0),
                               color: Colors.red[800],
                             ),
+
                           ),
                         ),
                         duration: Duration(milliseconds: 450),
@@ -123,6 +126,7 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> {
                         onEnd: () => setState(() => _colorRed = Colors.red[800],
                         ),
                       ),
+
                       TweenAnimationBuilder(
                         child: Padding(
                           padding: EdgeInsets.only(left: 40.25, top: 20),
@@ -155,6 +159,7 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> {
                         onEnd: () => setState(() => _colorYellow = Colors.orange,
                         ),
                       ),
+
                       TweenAnimationBuilder(
                         child: Padding(
                           padding: EdgeInsets.only(left: 40.25, top: 20),
@@ -166,6 +171,7 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> {
                               borderRadius: BorderRadius.circular(100.0),
                               color: Colors.green,
                             ),
+
                           ),
                         ),
                         duration: Duration(milliseconds: 750),
