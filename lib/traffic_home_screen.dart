@@ -10,6 +10,10 @@ class TrafficHomeScreen extends StatefulWidget {
 //hello-----
 
 class _TrafficHomeScreenState extends State<TrafficHomeScreen> {
+  Color _colorRed = Colors.pinkAccent;
+  Color _colorGreen = Colors.lightGreenAccent;
+  Color _colorYellow = Colors.yellowAccent;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,40 +92,105 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> {
                   ),
                   Column(
                     children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(left: 40.25, top: 20),
-                        child: Container(
-                          alignment: Alignment.topCenter,
-                          height: 67.5,
-                          width: 67.5,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(100.0),
-                            color: Colors.red,
+
+                      TweenAnimationBuilder(
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 40.25, top: 20),
+                          child: Container(
+                            alignment: Alignment.topCenter,
+                            height: 67.5,
+                            width: 67.5,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100.0),
+                              color: Colors.red[800],
+                            ),
+
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 40.25, top: 22.5),
-                        child: Container(
-                          alignment: Alignment.topCenter,
-                          height: 67.5,
-                          width: 67.5,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(100.0),
-                            color: Colors.orange,
-                          ),
+                        duration: Duration(milliseconds: 450),
+                        tween: ColorTween(begin: Colors.red[800], end: _colorRed),
+                        builder: (BuildContext context, Color color, Widget child) {
+                          return Padding(
+                            padding: EdgeInsets.only(left: 40.25, top: 20),
+                            child: Container(
+                              alignment: Alignment.topCenter,
+                              height: 67.5,
+                              width: 67.5,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100.0),
+                                color: color,
+                              ),
+                            ),
+                          );
+                        },
+                        onEnd: () => setState(() => _colorRed = Colors.red[800],
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 40.25, top: 22.5),
-                        child: Container(
-                          alignment: Alignment.topCenter,
-                          height: 67.5,
-                          width: 67.5,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(100.0),
-                            color: Colors.green,
+
+                      TweenAnimationBuilder(
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 40.25, top: 20),
+                          child: Container(
+                            alignment: Alignment.topCenter,
+                            height: 67.5,
+                            width: 67.5,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100.0),
+                              color: Colors.orange,
+                            ),
                           ),
+                        ),
+                        duration: Duration(milliseconds: 600),
+                        tween: ColorTween(begin: Colors.orange, end: _colorYellow),
+                        builder: (BuildContext context, Color color, Widget child) {
+                          return Padding(
+                            padding: EdgeInsets.only(left: 40.25, top: 20),
+                            child: Container(
+                              alignment: Alignment.topCenter,
+                              height: 67.5,
+                              width: 67.5,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100.0),
+                                color: color,
+                              ),
+                            ),
+                          );
+                        },
+                        onEnd: () => setState(() => _colorYellow = Colors.orange,
+                        ),
+                      ),
+
+                      TweenAnimationBuilder(
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 40.25, top: 20),
+                          child: Container(
+                            alignment: Alignment.topCenter,
+                            height: 67.5,
+                            width: 67.5,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100.0),
+                              color: Colors.green,
+                            ),
+
+                          ),
+                        ),
+                        duration: Duration(milliseconds: 750),
+                        tween: ColorTween(begin: Colors.green, end: _colorGreen),
+                        builder: (BuildContext context, Color color, Widget child) {
+                          return Padding(
+                            padding: EdgeInsets.only(left: 40.25, top: 20),
+                            child: Container(
+                              alignment: Alignment.topCenter,
+                              height: 67.5,
+                              width: 67.5,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100.0),
+                                color: color,
+                              ),
+                            ),
+                          );
+                        },
+                        onEnd: () => setState(() => _colorGreen = Colors.green,
                         ),
                       ),
                     ],

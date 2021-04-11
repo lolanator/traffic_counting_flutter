@@ -34,6 +34,9 @@ dependencies:
   #adds image_picker as a dependency
   image_picker: ^0.7.3
 
+  #adds fonts dependency
+  google_fonts: ^2.0.0
+
   #adds video_player as a dependency
   video_player: ^1.0.1
 
@@ -62,6 +65,9 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
    - assets/results.mp4
+
+  assets:
+    - google_fonts/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
