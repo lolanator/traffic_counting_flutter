@@ -14,7 +14,10 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Navigation"),
+        title: Text(
+          "Countify+",
+          style: TextStyle(fontFamily: "Chicle", fontSize: 40),
+        ),
         backgroundColor: Color(0xFF3594DD),
         leading: GestureDetector(
           onTap: () {
@@ -24,7 +27,8 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> {
             );
           },
           child: Icon(
-            Icons.bar_chart, // add custom icons also
+            Icons.bar_chart,
+            color: Colors.orangeAccent, // add custom icons also
           ),
         ),
       ),
@@ -45,18 +49,29 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> {
               ),
             ),
           ),
+          Container(
+            padding: EdgeInsets.only(top: 30),
+            height: MediaQuery.of(context).size.width * .2,
+            alignment: Alignment.center,
+            child: Text(
+              "Ready... Steady... GO!",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: Colors.white, fontSize: 30, fontFamily: "Ubuntu"),
+            ),
+          ),
           Center(
             child: Container(
-              height: 200,
-              width: 100,
+              height: 300,
+              width: 150,
               child: Stack(
                 children: [
                   Container(
                     //  alignment: Alignment.center,
-                    height: 200,
-                    width: 100,
+                    height: 300,
+                    width: 150,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30.0),
+                      borderRadius: BorderRadius.circular(40.0),
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
@@ -73,11 +88,11 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> {
                   Column(
                     children: <Widget>[
                       Padding(
-                        padding: EdgeInsets.only(left: 27, top: 20),
+                        padding: EdgeInsets.only(left: 40.25, top: 20),
                         child: Container(
                           alignment: Alignment.topCenter,
-                          height: 45,
-                          width: 45,
+                          height: 67.5,
+                          width: 67.5,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(100.0),
                             color: Colors.red,
@@ -85,11 +100,11 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(left: 27, top: 15),
+                        padding: EdgeInsets.only(left: 40.25, top: 22.5),
                         child: Container(
                           alignment: Alignment.topCenter,
-                          height: 45,
-                          width: 45,
+                          height: 67.5,
+                          width: 67.5,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(100.0),
                             color: Colors.orange,
@@ -97,11 +112,11 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(left: 27, top: 15),
+                        padding: EdgeInsets.only(left: 40.25, top: 22.5),
                         child: Container(
                           alignment: Alignment.topCenter,
-                          height: 45,
-                          width: 45,
+                          height: 67.5,
+                          width: 67.5,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(100.0),
                             color: Colors.green,
@@ -114,19 +129,37 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> {
               ),
             ),
           ),
+          SizedBox(
+            width: double.infinity,
+            height: 5,
+            child: const DecoratedBox(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                  colors: [
+                    Colors.red,
+                    Colors.green,
+                  ],
+                ),
+              ),
+            ),
+          ),
           InkWell(
               child: Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
                   color: Colors.white60,
                   width: double.infinity,
-                  height: 50,
+                  height: 80,
                   child: Center(
                     child: Text(
                       'Get started',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 25,
+                        fontFamily: "Ubuntu",
+                        fontWeight: FontWeight.bold,
+                        fontSize: 37,
                       ),
                     ),
                   ),

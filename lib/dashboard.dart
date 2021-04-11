@@ -1,11 +1,8 @@
 import 'dart:ui';
-import 'dart:math';
 import 'package:flutter/rendering.dart';
-import 'bezier.dart';
 import 'graph_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
-
 class DashBoard extends StatefulWidget {
   @override
   _DashBoardState createState() => _DashBoardState();
@@ -17,57 +14,40 @@ class _DashBoardState extends State<DashBoard>
   Animation<double> _animation;
   AnimationController _controller;
   List<Offset> points;
-  List<Bezier> _bezierpoints;
-  List<String> _chartTimes;
-  int _index = 1;
   int strokes = 20;
-  Offset _prev, _curr, _next;
-  double _dx1 = 0, _dy1 = 0, _dx2, _dy2, _m;
-  static final double _f0 = .3, _f1 = .5;
   double _t = 0;
-  List<String> _titles = <String>[
-    "Cars Passed Vs Time",
-    "Buses Passed Vs Time",
-    "Trucks Passed Vs Time",
-    "Bicycles Passed Vs Time"
-  ];
-  int _titleIndex = 0;
+  List<Vehicle> vehicles  = [Vehicle.CAR, Vehicle.BICYCLE, Vehicle.BUS, Vehicle.ALL];
+  Vehicle currVehicle = Vehicle.CAR;
   @override
   void initState() {
     super.initState();
-    points = _genData(strokes);
-    _chartTimes = _genTimes(strokes);
-    _bezierpoints = [];
-    _addBezierCurve();
     _controller =
-        AnimationController(duration: Duration(milliseconds: 300), vsync: this);
-    _controller.forward();
-    _controller.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        _controller.reset();
-        ++_index;
-
-        if (_index >= strokes - 1) {
-          _controller.stop();
-          _index = strokes - 1;
-        } else {
-          _addBezierCurve();
-        }
-      } else if (status == AnimationStatus.dismissed) {
-        _controller.forward();
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    _context = context;
+        AnimationController(duration: Duration(seconds: 1), vsync: this);
     _animation = Tween(begin: 0.0, end: 1.0).animate(_controller)
       ..addListener(() {
         setState(() {
           _t = _animation.value;
         });
+      })
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          _controller.stop();
+        } else if (status == AnimationStatus.dismissed) {
+          _controller.forward();
+        }
       });
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _context = context;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.lightBlueAccent,
@@ -88,27 +68,37 @@ class _DashBoardState extends State<DashBoard>
           ),
           child: Column(
             children: <Widget>[
-              Flexible(
+              Expanded(
+                  flex: 1,
                   child: CustomScrollView(
-                anchor: 0.0,
-                shrinkWrap: false,
-                physics: ClampingScrollPhysics(),
-                slivers: <Widget>[
-                  _buildHeader(),
-                  _buildRegionTabBar(),
-                  // _buildStatsTabBar(),
-                ],
-              )),
-              Container(
-                alignment: Alignment.center,
-                height: vh(.8),
-                width: vw(.8),
-                child: CustomPaint(
-                  painter: GraphPainter(points, strokes, _t, _bezierpoints,
-                      _titles[_titleIndex], _chartTimes),
-                  size: Size(vw(.9), vh(.8)),
+                    anchor: 0.0,
+                    shrinkWrap: false,
+                    physics: ClampingScrollPhysics(),
+                    slivers: <Widget>[
+                      _buildHeader(),
+                      _buildRegionTabBar(),
+                      // _buildStatsTabBar(),
+                    ],
+                  )),
+              Expanded(
+                flex: 4,
+                child: Container(
+                  alignment: Alignment.center,
+                  height: vh(.8),
+                  width: vw(.8),
+                  child: CustomPaint(
+                    painter: GraphPainter.drawBarChart(<Offset>[
+                      Offset(0, 13),
+                      Offset(0, 7),
+                      Offset(0, 10),
+                    ], strokes, _t, currVehicle),
+
+                    // GraphPainter(points, strokes, _t, _bezierpoints,
+                    //     _titles[_titleIndex], _chartTimes),
+                    size: Size(vw(.9), vh(.5)),
+                  ),
                 ),
-              ),
+              )
             ],
           )),
     );
@@ -160,20 +150,15 @@ class _DashBoardState extends State<DashBoard>
             unselectedLabelColor: Colors.white,
             tabs: <Widget>[
               Text('Cars'),
-              Text('Buses'),
-              Text('Trucks'),
               Text('Bicycles'),
+              Text('Buses'),
+              Text('All'),
             ],
             onTap: (index) {
               setState(() {
-                _titleIndex = index;
+                currVehicle = vehicles[index];
                 _controller.stop();
-                points = _genData(strokes);
-                _bezierpoints = [];
-                _index = 1;
-                _dx1 = _dy1 = 0;
                 _t = 0;
-                _addBezierCurve();
                 _controller.reset();
                 _controller.forward();
               });
@@ -190,40 +175,4 @@ class _DashBoardState extends State<DashBoard>
 
   // ------------------------------------------------------Michael
   //
-  double _gradient(Offset a, Offset b) {
-    Offset c = b - a;
-    return c.dy / c.dx;
-  }
-
-  void _addBezierCurve() {
-    _prev = points.length > 0 ? points[_index - 1] : null;
-    _curr = points.length > 1 ? points[_index] : null;
-    _next = points.length > 2 ? points[_index + 1] : null;
-    if (_next != null) {
-      _m = _gradient(_prev, _next);
-      _dx2 = (_next - _prev).dx * -_f0;
-      _dy2 = _dx2 * _m * _f1;
-    } else {
-      _dx2 = _dy2 = 0;
-    }
-    _bezierpoints.add(Bezier(
-        _prev, _prev - Offset(_dx1, _dy1), _curr + Offset(_dx2, _dy2), _curr));
-    _dx1 = _dx2;
-    _dy1 = _dy2;
-  }
-
-  List<String> _genTimes(int numOfDates) {
-    List<String> result = [];
-    for (int i = 0; i < numOfDates; i++)
-      result.add("00:${(59 * (i / (numOfDates + 1))).toInt()}");
-    return result;
-  }
-
-  static List<Offset> _genData(int strokes) {
-    List<Offset> points = [];
-    final rng = Random();
-    for (var i = 0; i < strokes; i++)
-      points.add(Offset(i.toDouble(), 1 + rng.nextDouble() * (strokes - 1)));
-    return points;
-  }
 }
