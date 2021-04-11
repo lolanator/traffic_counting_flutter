@@ -4,6 +4,7 @@ import 'package:traffic_counting_project/camera_screen.dart';
 import 'package:camera/camera.dart';
 
 void main() async {
+
   // Ensure that plugin services are initialized so that `availableCameras()`
   // can be called before `runApp()`
   WidgetsFlutterBinding.ensureInitialized();

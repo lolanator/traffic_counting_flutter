@@ -6,6 +6,7 @@ import 'package:video_player/video_player.dart';
 import 'package:traffic_counting_project/dashboard.dart';
 import 'package:traffic_counting_project/loading_screen.dart';
 
+
 class CameraScreen extends StatefulWidget {
   CameraScreen() : super();
 
@@ -66,6 +67,7 @@ class _CameraScreenState extends State<CameraScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => LoadingScreen()),
+
                 );
               });
             }

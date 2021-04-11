@@ -58,6 +58,7 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> {
               textAlign: TextAlign.center,
               style: TextStyle(
                   color: Colors.white, fontSize: 30, fontFamily: "Ubuntu"),
+
             ),
           ),
           Center(
