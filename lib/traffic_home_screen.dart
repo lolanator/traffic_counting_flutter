@@ -31,8 +31,9 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> {
       appBar: AppBar(
         title: Text(
             "Traffic Counting",
-            style: GoogleFonts.unkempt(
-              fontSize: 32
+            style: GoogleFonts.sunflower(
+              fontSize: 33,
+              fontWeight: FontWeight.bold,
             ),
         ),
         backgroundColor: Colors.lightBlueAccent,
@@ -167,7 +168,7 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> {
                 );
               }),*/
 
-/*TweenAnimationBuilder(
+/*                      TweenAnimationBuilder(
                           tween: ColorTween(begin: Colors.white, end: Colors.green),
                           duration: const Duration(seconds: 3),
                           builder: (_, Color color, __){
