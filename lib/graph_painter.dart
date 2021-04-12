@@ -3,9 +3,18 @@ import 'dart:ui' as ui;
 import 'dart:math';
 
 class GraphPainter extends CustomPainter {
-  List<Offset> _points;
+  List<int> _points;
   List<ui.Image> _images;
-  List<Color> _vehicleColors = <Color>[Colors.red, Colors.orange, Colors.green];
+  List<Color> _gradients = <Color>[
+    Colors.red,
+    Color(0xFFFF0000),
+    Colors.orange,
+    Color(0xFFFF4500),
+    Colors.green,
+    Color(0xFF00FF00),
+    Colors.blue,
+    Color(0xFF0000FF)
+  ];
   double _left,
       _top,
       _width,
@@ -15,11 +24,12 @@ class GraphPainter extends CustomPainter {
       _barWidth,
       _t;
   int _strokes;
-  Vehicle _vehicleNo;
-  List<String> _titles = <String>["Cars", "Bicycles", "Buses"];
+  Vehicle _vehicle;
+  int _vehicleNo;
+  List<String> _titles = <String>["Cars", "Bicycles", "Buses", "Trucks"];
 
-  GraphPainter.drawBarChart(
-      this._points, this._strokes, this._t, this._vehicleNo, this._images);
+  GraphPainter.drawBarChart(this._points, this._strokes, this._t, this._vehicle,
+      this._images, this._vehicleNo);
 
   void _drawGuidingLines(Canvas canvas, Size size, Paint paint) {
     paint.color = Color(0x22FFFFFF);
@@ -32,120 +42,131 @@ class GraphPainter extends CustomPainter {
     }
   }
 
-  void _drawAxes(Canvas canvas, Paint paint) {
+  void _drawBorder(Canvas canvas, Paint paint) {
     paint.color = Colors.white;
     paint.strokeWidth = 2.5;
-    canvas.drawLine(Offset(_left, _top), Offset(_left, _top + _height), paint);
-    canvas.drawLine(Offset(_left, _top + _height),
-        Offset(_left + _width, _top + _height), paint);
+    paint.style = PaintingStyle.stroke;
+    final double diameter = 2 * _outerRadius;
+    Path path = Path();
+    path.moveTo(_left + _outerRadius, _top);
+    path.lineTo(_left + _width - _outerRadius, _top);
+    path.arcTo(
+        Rect.fromLTWH(_left + _width - diameter, _top, diameter, diameter),
+        1.5 * pi,
+        .5 * pi,
+        false);
+    path.lineTo(_left + _width, _top + _height - _outerRadius);
+    path.arcTo(
+        Rect.fromLTWH(_left + _width - diameter, _top + _height - diameter,
+            diameter, diameter),
+        0,
+        .5 * pi,
+        false);
+    path.lineTo(_left + _outerRadius, _top + _height);
+    path.arcTo(
+        Rect.fromLTWH(_left, _top + _height - diameter, diameter, diameter),
+        .5 * pi,
+        .5 * pi,
+        false);
+    path.lineTo(_left, _top + _outerRadius);
+    path.arcTo(
+        Rect.fromLTWH(_left, _top, diameter, diameter), pi, .5 * pi, false);
+    canvas.drawPath(path, paint);
   }
 
-  void _drawNumbers(Canvas canvas, Paint paint, double offset) {
-    final double fontSize = _width / 4 * .2;
+  bool _areImagesLoaded() {
+    for (int i = 0; i < _images.length; i++)
+      if (_images[i] == null) return false;
+    return true;
+  }
+
+  void _drawXAxisLabel(int vehicleNo, Canvas canvas) {
+    Paint paint = Paint();
+    Offset c = Offset(_left + _width / (_titles.length + 1) * (vehicleNo + 1),
+        _top + _height);
+    paint.color = Colors.white;
+    canvas.drawCircle(c, _outerRadius, paint);
+    paint.color = Color(0xFF444444);
+    canvas.drawCircle(c, _innerRadius, paint);
+    if (_areImagesLoaded()) {
+      final Size imageSize = Size(_images[vehicleNo].width.toDouble(),
+          _images[vehicleNo].height.toDouble());
+      final FittedSizes sizes =
+          applyBoxFit(BoxFit.fill, imageSize, Size(_innerRadius, _innerRadius));
+      final Rect inputSubrect =
+          Alignment.center.inscribe(sizes.source, Offset.zero & imageSize);
+      Rect r = Rect.fromLTWH(c.dx - (_innerRadius),
+          _top + _height - _innerRadius, _innerRadius * 2, _innerRadius * 2);
+      final Rect outputSubrect =
+          Alignment.center.inscribe(sizes.destination, r);
+      canvas.drawImageRect(
+          _images[vehicleNo], inputSubrect, outputSubrect, paint);
+    }
+  }
+
+  void _drawXAxisLabels(Canvas canvas) {
+    if (_vehicle == Vehicle.ALL)
+      for (int i = 0; i < _titles.length; i++) _drawXAxisLabel(i, canvas);
+    else
+      _drawXAxisLabel(_vehicleNo, canvas);
+  }
+
+  void _drawBar(int vehicleNo, Canvas canvas) {
+    Paint paint = Paint();
+    paint.color = Colors.white;
+    double left =
+        _left + _width / (_points.length + 1) * (vehicleNo + 1) - _barWidth / 2;
+    double height = (_height * _points[vehicleNo] / _strokes) * _t;
+    double top = _top + _height - max(height - _outerRadius, 0.0);
+
+    Rect outerRect =
+        Rect.fromLTWH(left, top, _barWidth, max(height - _outerRadius, 0));
+    paint.color = Colors.white;
+    canvas.drawRect(outerRect, paint);
+
+    // draw outer circle
+    Offset c = Offset(left + _outerRadius, top);
+    paint.color = Colors.white;
+    canvas.drawCircle(c, _outerRadius, paint);
+
+    double innerBarWidth = _innerRadius * 2;
+    Rect innerRect = Rect.fromLTWH(left + (_barWidth - innerBarWidth) / 2, top,
+        innerBarWidth, max(height - _innerRadius, 0));
+    paint.color = _gradients[vehicleNo * 2];
+    paint.shader = ui.Gradient.linear(
+        Offset(left, top),
+        Offset(left + _barWidth, top + height),
+        [_gradients[vehicleNo * 2], _gradients[vehicleNo * 2 + 1]]);
+    canvas.drawRect(innerRect, paint);
+
+    //draw Inner circle
+    canvas.drawCircle(c, _innerRadius, paint);
+
+    // draw the magnitude of the bar on top of the bar.
+    final double fontSize = min(_width, _height) / 4 * .2;
     ui.ParagraphBuilder pb;
     ui.ParagraphStyle ps;
     ui.ParagraphConstraints pc;
     ui.Paragraph par;
-    Offset off;
+    paint = Paint();
     paint.color = Colors.white;
-    //draw the vertical numbers
-    for (int i = 0; i < _strokes; i += 2) {
-      ps = ui.ParagraphStyle(textAlign: TextAlign.right, fontSize: fontSize);
-      pb = ui.ParagraphBuilder(ps);
-      pb.pushStyle(ui.TextStyle(color: Colors.white));
-      pb.addText("${_strokes - i - 1}");
-      pc = ui.ParagraphConstraints(width: 100);
-      par = pb.build();
-      par.layout(pc);
-      double topOffset = _top + _height / _strokes * (i + 1) - par.height / 2;
-      off = Offset(_left - offset - par.width, topOffset);
-      canvas.drawParagraph(par, off);
-    }
 
-    var drawXAxisLabels = (int vehicleNo) {
-      Offset c = Offset(_left + _width / (_titles.length + 1) * (vehicleNo + 1),
-          _top + _height);
-      canvas.drawCircle(c, _outerRadius, paint);
-      paint.color = Color(0xFF444444);
-      canvas.drawCircle(c, _innerRadius, paint);
-      paint.color = Colors.white;
-      if (_images.length > 0) {
-        final Size imageSize = Size(_images[vehicleNo].width.toDouble(),
-            _images[vehicleNo].height.toDouble());
-        BoxFit fit = BoxFit.fill;
-        final FittedSizes sizes =
-            applyBoxFit(fit, imageSize, Size(_innerRadius, _innerRadius));
-        final Rect inputSubrect =
-            Alignment.center.inscribe(sizes.source, Offset.zero & imageSize);
-        Rect r = Rect.fromLTWH(c.dx - (_innerRadius),
-            _top + _height - _innerRadius, _innerRadius * 2, _innerRadius * 2);
-        final Rect outputSubrect =
-            Alignment.center.inscribe(sizes.destination, r);
-        canvas.drawImageRect(
-            _images[vehicleNo], inputSubrect, outputSubrect, paint);
-      }
-    };
-    int vehicleNo;
-    switch (_vehicleNo) {
-      case Vehicle.CAR:
-        vehicleNo = 0;
-        break;
-      case Vehicle.BICYCLE:
-        vehicleNo = 1;
-        break;
-      case Vehicle.BUS:
-        vehicleNo = 2;
-        break;
-      case Vehicle.ALL:
-        for (int i = 0; i < _titles.length; i++) drawXAxisLabels(i);
-        return;
-    }
-    drawXAxisLabels(vehicleNo);
+    ps = ui.ParagraphStyle(textAlign: TextAlign.center, fontSize: fontSize);
+    pb = ui.ParagraphBuilder(ps);
+    pb.pushStyle(ui.TextStyle(color: Colors.white));
+    pb.addText("${(_points[vehicleNo] * _t).ceil()}");
+    pc = ui.ParagraphConstraints(width: 100);
+    par = pb.build();
+    par.layout(pc);
+    canvas.drawParagraph(
+        par, Offset(left - (par.width - _barWidth) / 2, top - _outerRadius * 2));
   }
 
-  _drawBarChart(Canvas canvas, Size size, Paint paint) {
-    paint.color = Colors.white;
-    int vehicleNo;
-
-    var drawBar = (int vehicleNo) {
-      double left = _left +
-          _width / (_points.length + 1) * (vehicleNo + 1) -
-          _barWidth / 2;
-      double height = (_height * _points[vehicleNo].dy / _strokes) * _t;
-      double top = _top + _height - max(height - _outerRadius, 0.0);
-
-      Rect outerRect =
-          Rect.fromLTWH(left, top, _barWidth, max(height - _outerRadius, 0));
-      paint.color = Colors.white;
-      canvas.drawRect(outerRect, paint);
-
-      Offset c = Offset(left + _outerRadius, top);
-      paint.color = Colors.white;
-      canvas.drawCircle(c, _outerRadius, paint);
-
-      double innerBarWidth = _innerRadius * 2;
-      Rect innerRect = Rect.fromLTWH(left + (_barWidth - innerBarWidth) / 2,
-          top, innerBarWidth, max(height - _innerRadius, 0));
-      paint.color = _vehicleColors[vehicleNo];
-      canvas.drawRect(innerRect, paint);
-
-      canvas.drawCircle(c, _innerRadius, paint);
-    };
-    switch (_vehicleNo) {
-      case Vehicle.CAR:
-        vehicleNo = 0;
-        break;
-      case Vehicle.BICYCLE:
-        vehicleNo = 1;
-        break;
-      case Vehicle.BUS:
-        vehicleNo = 2;
-        break;
-      case Vehicle.ALL:
-        for (int i = 0; i < _points.length; i++) drawBar(i);
-        return;
-    }
-    drawBar(vehicleNo);
+  _drawBarChart(Canvas canvas, Size size) {
+    if (_vehicle == Vehicle.ALL)
+      for (int i = 0; i < _titles.length; i++) _drawBar(i, canvas);
+    else
+      _drawBar(_vehicleNo, canvas);
   }
 
   @override
@@ -154,25 +175,19 @@ class GraphPainter extends CustomPainter {
     _top = size.height * .1;
     _width = size.width * .9;
     _height = size.height * .8;
-    _outerRadius = size.width * .075;
-    _innerRadius = _outerRadius - 1;
+    _outerRadius = min(size.width, size.height) * .075;
+    _innerRadius = _outerRadius - 1.5;
     _barWidth = _outerRadius * 2;
     Paint paint = Paint();
 
     //draw the axes
-    _drawAxes(canvas, paint);
-
-    //draw the numbers on the axes
-
+    _drawBorder(canvas, paint);
     //draw the guiding lines on the graph
     _drawGuidingLines(canvas, size, paint);
-
     // draw the bar chart
-    _drawBarChart(canvas, size, paint);
+    _drawBarChart(canvas, size);
 
-    // draw the numbers and x-axis labels on the chart
-    final double offset = 15;
-    _drawNumbers(canvas, paint, offset);
+    _drawXAxisLabels(canvas);
   }
 
   @override
@@ -181,4 +196,4 @@ class GraphPainter extends CustomPainter {
   }
 }
 
-enum Vehicle { CAR, BICYCLE, BUS, ALL }
+enum Vehicle { CAR, BICYCLE, BUS, TRUCK, ALL }

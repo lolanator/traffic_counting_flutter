@@ -16,23 +16,19 @@ class _DashBoardState extends State<DashBoard>
   BuildContext _context;
   Animation<double> _animation;
   AnimationController _controller;
-  List<Offset> points;
-  int strokes = 20;
+  List<int> _points = [10, 2, 0, 3];
+  int strokes = 12;
   double _t = 0;
-  List<ui.Image> _images = [];
-  List<Vehicle> vehicles = [
-    Vehicle.CAR,
-    Vehicle.BICYCLE,
-    Vehicle.BUS,
-    Vehicle.ALL
-  ];
+  List<ui.Image> _images = [null, null, null, null];
+  int _vehicleNo = 0;
   Vehicle currVehicle = Vehicle.CAR;
   @override
   void initState() {
     super.initState();
-    _loadImages("car.png");
-    _loadImages("bike.png");
-    _loadImages("school-bus.png");
+    _loadImages("car.png", 0);
+    _loadImages("bike.png", 1);
+    _loadImages("school-bus.png", 2);
+    _loadImages("delivery-truck.png", 3);
     _controller =
         AnimationController(duration: Duration(seconds: 1), vsync: this);
     _animation = Tween(begin: 0.0, end: 1.0).animate(_controller)
@@ -51,12 +47,12 @@ class _DashBoardState extends State<DashBoard>
     _controller.forward();
   }
 
-  void _loadImages(String filename) async {
+  void _loadImages(String filename, int index) async {
     ByteData bd = await rootBundle.load(filename);
     final Uint8List bytes = Uint8List.view(bd.buffer);
     final ui.Codec codec = await ui.instantiateImageCodec(bytes);
     final ui.Image image = (await codec.getNextFrame()).image;
-    setState(() => _images.add(image));
+    setState(() => _images[index] = image);
   }
 
   @override
@@ -107,11 +103,8 @@ class _DashBoardState extends State<DashBoard>
                   height: vh(.8),
                   width: vw(.8),
                   child: CustomPaint(
-                    painter: GraphPainter.drawBarChart(<Offset>[
-                      Offset(0, 13),
-                      Offset(0, 7),
-                      Offset(0, 10),
-                    ], strokes, _t, currVehicle, _images),
+                    painter: GraphPainter.drawBarChart(
+                        _points, strokes, _t, currVehicle, _images, _vehicleNo),
 
                     // GraphPainter(points, strokes, _t, _bezierpoints,
                     //     _titles[_titleIndex], _chartTimes),
@@ -152,9 +145,10 @@ class _DashBoardState extends State<DashBoard>
 
   void setColor(Container c, int colo) {}
   SliverToBoxAdapter _buildRegionTabBar() {
+    TextStyle ts = TextStyle(fontSize: 12);
     return SliverToBoxAdapter(
       child: DefaultTabController(
-        length: 4,
+        length: 5,
         child: Container(
           height: 50.0,
           decoration: BoxDecoration(
@@ -169,16 +163,19 @@ class _DashBoardState extends State<DashBoard>
             labelColor: Colors.black,
             unselectedLabelColor: Colors.white,
             tabs: <Widget>[
-              Text('Cars'),
-              Text('Bicycles'),
-              Text('Buses'),
-              Text('All'),
+              Text('Cars', style: ts),
+              Text('Bicycles', style: ts),
+              Text('Buses', style: ts),
+              Text('Trucks', style: ts),
+              Text('All', style: ts),
             ],
             onTap: (index) {
               setState(() {
-                currVehicle = vehicles[index];
+                currVehicle = Vehicle.values[index];
+                _vehicleNo = index;
                 _controller.stop();
                 _t = 0;
+                _controller.duration = Duration(milliseconds: (_points[index == _points.length ? 0 : index] ~/ 0.02));
                 _controller.reset();
                 _controller.forward();
               });
