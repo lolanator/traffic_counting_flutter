@@ -9,7 +9,7 @@ class GraphPainter extends CustomPainter {
     Colors.red,
     Color(0xFFFF0000),
     Colors.orange,
-    Color(0xFFFFA500),
+    Color(0xFFFF4500),
     Colors.green,
     Color(0xFF00FF00),
     Colors.blue,
@@ -158,7 +158,8 @@ class GraphPainter extends CustomPainter {
     pc = ui.ParagraphConstraints(width: 100);
     par = pb.build();
     par.layout(pc);
-    canvas.drawParagraph(par, Offset(left - _outerRadius, top - _outerRadius * 2));
+    canvas.drawParagraph(
+        par, Offset(left - (par.width - _barWidth) / 2, top - _outerRadius * 2));
   }
 
   _drawBarChart(Canvas canvas, Size size) {
