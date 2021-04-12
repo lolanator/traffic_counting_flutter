@@ -16,7 +16,7 @@ class _DashBoardState extends State<DashBoard>
   BuildContext _context;
   Animation<double> _animation;
   AnimationController _controller;
-  List<int> _points = [10, 2, 0, 3];
+  List<int> _points = [10, 2, 0, 1];
   int strokes = 12;
   double _t = 0;
   List<ui.Image> _images = [null, null, null, null];
