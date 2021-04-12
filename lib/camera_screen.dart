@@ -31,7 +31,7 @@ class _CameraScreenState extends State<CameraScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
+    super.dispose();
     controller.dispose();
   }
 
