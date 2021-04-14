@@ -9,6 +9,7 @@ class TrafficHomeScreen extends StatefulWidget {
 }
 //hello-----
 
+
 class _TrafficHomeScreenState extends State<TrafficHomeScreen> with TickerProviderStateMixin {
   Animation<Color> animationGreen;
   AnimationController controllerGreen;
@@ -120,7 +121,6 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> with TickerProvid
               textAlign: TextAlign.center,
               style: TextStyle(
                   color: Colors.white, fontSize: 30, fontFamily: "Ubuntu"),
-
             ),
           ),
           Center(
@@ -150,7 +150,6 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> with TickerProvid
                   ),
                   Column(
                     children: <Widget>[
-
                       Padding(
                         padding: EdgeInsets.only(left: 40.25, top: 20),
                         child: Container(
@@ -163,7 +162,6 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> with TickerProvid
                           ),
                         ),
                       ),
-
                       Padding(
                         padding: EdgeInsets.only(left: 40.25, top: 20),
                         child: Container(
@@ -176,7 +174,6 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> with TickerProvid
                           ),
                         ),
                       ),
-
                       Padding(
                         padding: EdgeInsets.only(left: 40.25, top: 20),
                         child: Container(
@@ -250,5 +247,4 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> with TickerProvid
     super.dispose();
   }
 }
-//------------------------------------------------------ Lola
-
+//--------------------------Jack
