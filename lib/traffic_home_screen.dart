@@ -9,10 +9,69 @@ class TrafficHomeScreen extends StatefulWidget {
 }
 //hello-----
 
-class _TrafficHomeScreenState extends State<TrafficHomeScreen> {
-  Color _colorRed = Colors.pinkAccent;
-  Color _colorGreen = Colors.lightGreenAccent;
-  Color _colorYellow = Colors.yellowAccent;
+
+class _TrafficHomeScreenState extends State<TrafficHomeScreen> with TickerProviderStateMixin {
+  Animation<Color> animationGreen;
+  AnimationController controllerGreen;
+
+  Animation<Color> animationYellow;
+  AnimationController controllerYellow;
+
+  Animation<Color> animationRed;
+  AnimationController controllerRed;
+
+  @override
+  void initState() {
+    super.initState();
+
+    controllerGreen =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 1400));
+    animationGreen = ColorTween(begin: Colors.green[700], end: Colors.lightGreenAccent).animate(controllerGreen)
+      ..addListener(() {
+        setState(() {});
+      })
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          controllerGreen.reverse();
+        } else if (status == AnimationStatus.dismissed) {
+          controllerGreen.forward();
+        }
+      });
+
+    controllerGreen.forward();
+
+    controllerYellow =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 1200));
+    animationYellow = ColorTween(begin: Colors.orange, end: Colors.yellowAccent).animate(controllerYellow)
+      ..addListener(() {
+        setState(() {});
+      })
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          controllerYellow.reverse();
+        } else if (status == AnimationStatus.dismissed) {
+          controllerYellow.forward();
+        }
+      });
+
+    controllerYellow.forward();
+
+    controllerRed =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 1000));
+    animationRed = ColorTween(begin: Colors.red[800], end: Colors.pinkAccent).animate(controllerRed)
+      ..addListener(() {
+        setState(() {});
+      })
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          controllerRed.reverse();
+        } else if (status == AnimationStatus.dismissed) {
+          controllerRed.forward();
+        }
+      });
+
+    controllerRed.forward();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,100 +150,40 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> {
                   ),
                   Column(
                     children: <Widget>[
-                      TweenAnimationBuilder(
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 40.25, top: 20),
-                          child: Container(
-                            alignment: Alignment.topCenter,
-                            height: 67.5,
-                            width: 67.5,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100.0),
-                              color: Colors.red[800],
-                            ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 40.25, top: 20),
+                        child: Container(
+                          alignment: Alignment.topCenter,
+                          height: 67.5,
+                          width: 67.5,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100.0),
+                            color: animationRed.value,
                           ),
-                        ),
-                        duration: Duration(milliseconds: 450),
-                        tween: ColorTween(begin: Colors.red[800], end: _colorRed),
-                        builder: (BuildContext context, Color color, Widget child) {
-                          return Padding(
-                            padding: EdgeInsets.only(left: 40.25, top: 20),
-                            child: Container(
-                              alignment: Alignment.topCenter,
-                              height: 67.5,
-                              width: 67.5,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(100.0),
-                                color: color,
-                              ),
-                            ),
-                          );
-                        },
-                        onEnd: () => setState(() => _colorRed = Colors.red[800],
                         ),
                       ),
-                      TweenAnimationBuilder(
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 40.25, top: 20),
-                          child: Container(
-                            alignment: Alignment.topCenter,
-                            height: 67.5,
-                            width: 67.5,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100.0),
-                              color: Colors.orange,
-                            ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 40.25, top: 20),
+                        child: Container(
+                          alignment: Alignment.topCenter,
+                          height: 67.5,
+                          width: 67.5,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100.0),
+                            color: animationYellow.value,
                           ),
-                        ),
-                        duration: Duration(milliseconds: 600),
-                        tween: ColorTween(begin: Colors.orange, end: _colorYellow),
-                        builder: (BuildContext context, Color color, Widget child) {
-                          return Padding(
-                            padding: EdgeInsets.only(left: 40.25, top: 20),
-                            child: Container(
-                              alignment: Alignment.topCenter,
-                              height: 67.5,
-                              width: 67.5,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(100.0),
-                                color: color,
-                              ),
-                            ),
-                          );
-                        },
-                        onEnd: () => setState(() => _colorYellow = Colors.orange,
                         ),
                       ),
-                      TweenAnimationBuilder(
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 40.25, top: 20),
-                          child: Container(
-                            alignment: Alignment.topCenter,
-                            height: 67.5,
-                            width: 67.5,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100.0),
-                              color: Colors.green,
-                            ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 40.25, top: 20),
+                        child: Container(
+                          alignment: Alignment.topCenter,
+                          height: 67.5,
+                          width: 67.5,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100.0),
+                            color: animationGreen.value,
                           ),
-                        ),
-                        duration: Duration(milliseconds: 750),
-                        tween: ColorTween(begin: Colors.green, end: _colorGreen),
-                        builder: (BuildContext context, Color color, Widget child) {
-                          return Padding(
-                            padding: EdgeInsets.only(left: 40.25, top: 20),
-                            child: Container(
-                              alignment: Alignment.topCenter,
-                              height: 67.5,
-                              width: 67.5,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(100.0),
-                                color: color,
-                              ),
-                            ),
-                          );
-                        },
-                        onEnd: () => setState(() => _colorGreen = Colors.green,
                         ),
                       ),
                     ],
@@ -239,5 +238,13 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    controllerRed.dispose();
+    controllerGreen.dispose();
+    controllerYellow.dispose();
+    super.dispose();
+  }
 }
-//------------------------------------------------------ Lola
+//--------------------------Jack
