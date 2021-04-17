@@ -113,34 +113,52 @@ class GraphPainter extends CustomPainter {
 
   void _drawBar(int vehicleNo, Canvas canvas) {
     Paint paint = Paint();
-    paint.color = Colors.white;
     double left =
         _left + _width / (_points.length + 1) * (vehicleNo + 1) - _barWidth / 2;
     double height = (_height * _points[vehicleNo] / _strokes) * _t;
     double top = _top + _height - max(height - _outerRadius, 0.0);
 
-    Rect outerRect =
-        Rect.fromLTWH(left, top, _barWidth, max(height - _outerRadius, 0));
-    paint.color = Colors.white;
-    canvas.drawRect(outerRect, paint);
+    // Rect outerRect =
+    //     Rect.fromLTWH(left, top, _barWidth, max(height - _outerRadius, 0));
+    // paint.color = Colors.white;
+    // canvas.drawRect(outerRect, paint);
 
     // draw outer circle
-    Offset c = Offset(left + _outerRadius, top);
-    paint.color = Colors.white;
-    canvas.drawCircle(c, _outerRadius, paint);
-
-    double innerBarWidth = _innerRadius * 2;
-    Rect innerRect = Rect.fromLTWH(left + (_barWidth - innerBarWidth) / 2, top,
-        innerBarWidth, max(height - _innerRadius, 0));
+    // Offset c = Offset(left + _outerRadius, top);
+    // canvas.drawCircle(c, _outerRadius, paint);
+    // double innerBarWidth = _innerRadius * 2;
+    // Rect innerRect = Rect.fromLTWH(left + (_barWidth - innerBarWidth) / 2, top,
+    //     innerBarWidth, max(height - _innerRadius, 0));
     paint.color = _gradients[vehicleNo * 2];
     paint.shader = ui.Gradient.linear(
         Offset(left, top),
         Offset(left + _barWidth, top + height),
         [_gradients[vehicleNo * 2], _gradients[vehicleNo * 2 + 1]]);
-    canvas.drawRect(innerRect, paint);
-
+    // canvas.drawRect(innerRect, paint);
     //draw Inner circle
-    canvas.drawCircle(c, _innerRadius, paint);
+    // canvas.drawCircle(c, _innerRadius, paint);
+
+    Path path = Path();
+    double portion = 1;
+    path.moveTo(left - _outerRadius * portion, _top + _height);
+    path.cubicTo(left + _outerRadius, _top + _height, left,
+        _top + _height - height, left + _outerRadius, _top + _height - height);
+    path.cubicTo(
+        left + _outerRadius * 2,
+        _top + _height - height,
+        left + _outerRadius,
+        _top + _height,
+        left + _outerRadius * (2 + portion),
+        _top + _height);
+    paint.style = PaintingStyle.fill;
+    path.lineTo(left - _outerRadius, _top + _height);
+    canvas.drawPath(path, paint);
+
+    paint = Paint();
+    paint.color = Colors.white;
+    paint.strokeWidth = 1.5;
+    paint.style = PaintingStyle.stroke;
+    canvas.drawPath(path, paint);
 
     // draw the magnitude of the bar on top of the bar.
     final double fontSize = min(_width, _height) / 4 * .2;
@@ -158,8 +176,8 @@ class GraphPainter extends CustomPainter {
     pc = ui.ParagraphConstraints(width: 100);
     par = pb.build();
     par.layout(pc);
-    canvas.drawParagraph(
-        par, Offset(left - (par.width - _barWidth) / 2, top - _outerRadius * 2));
+    canvas.drawParagraph(par,
+        Offset(left - (par.width - _barWidth) / 2, top - _outerRadius * 2));
   }
 
   _drawBarChart(Canvas canvas, Size size) {
@@ -171,11 +189,11 @@ class GraphPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    _left = size.width * .1;
-    _top = size.height * .1;
-    _width = size.width * .9;
-    _height = size.height * .8;
-    _outerRadius = min(size.width, size.height) * .075;
+    _left = size.width * 0;
+    _top = size.height * 0;
+    _width = size.width * 1;
+    _height = size.height * 1;
+    _outerRadius = min(size.width, size.height) * .066;
     _innerRadius = _outerRadius - 1.5;
     _barWidth = _outerRadius * 2;
     Paint paint = Paint();

@@ -17,7 +17,6 @@ class _DashBoardState extends State<DashBoard>
   Animation<double> _animation;
   AnimationController _controller;
   List<int> _points = [10, 2, 0, 1];
-  int strokes = 12;
   double _t = 0;
   List<ui.Image> _images = [null, null, null, null];
   int _vehicleNo = 0;
@@ -104,11 +103,8 @@ class _DashBoardState extends State<DashBoard>
                   width: vw(.8),
                   child: CustomPaint(
                     painter: GraphPainter.drawBarChart(
-                        _points, strokes, _t, currVehicle, _images, _vehicleNo),
-
-                    // GraphPainter(points, strokes, _t, _bezierpoints,
-                    //     _titles[_titleIndex], _chartTimes),
-                    size: Size(vw(.9), vh(.5)),
+                        _points, 12, _t, currVehicle, _images, _vehicleNo),
+                    size: Size(vw(.95), vh(.5)),
                   ),
                 ),
               )
