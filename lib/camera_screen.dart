@@ -1,9 +1,12 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
 import 'package:traffic_counting_project/dashboard.dart';
+import 'package:traffic_counting_project/loading_screen.dart';
+
 
 class CameraScreen extends StatefulWidget {
   CameraScreen() : super();
@@ -64,7 +67,8 @@ class _CameraScreenState extends State<CameraScreen> {
               Future.delayed(Duration(seconds: 27), () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => DashBoard()),
+                  MaterialPageRoute(builder: (context) => LoadingScreen()),
+
                 );
               });
             }
@@ -76,106 +80,77 @@ class _CameraScreenState extends State<CameraScreen> {
     );
   }
 }
+//---------------------------Lola code
 
+/*
 //-----------------------------jack code
-// class CameraScreen extends StatefulWidget {
-//   @override
-//   _CameraScreenState createState() => _CameraScreenState();
-// }
-//
-// class _CameraScreenState extends State<CameraScreen> {
-//   File _galleryVideo;
-//   File _cameraVideo;
-//
-//   ImagePicker picker = ImagePicker();
-//
-//   VideoPlayerController _videoPlayerController;
-//   VideoPlayerController _cameraVideoPlayerController;
-//
-//   // This funcion will helps you to pick a Video File
-//   _pickVideoFromGallery() async {
-//     PickedFile pickedFile = await picker.getVideo(source: ImageSource.gallery);
-//
-//     _galleryVideo = File(pickedFile.path);
-//
-//     _videoPlayerController = VideoPlayerController.file(_galleryVideo)
-//       ..initialize().then((_) {
-//         setState(() {});
-//         _videoPlayerController.play();
-//       });
-//   }
-//
-//   // This funcion will helps you to pick a Video File from Camera
-//   _pickVideoFromCamera() async {
-//     PickedFile pickedFile = await picker.getVideo(source: ImageSource.camera);
-//
-//     _cameraVideo = File(pickedFile.path);
-//
-//     _cameraVideoPlayerController = VideoPlayerController.file(_cameraVideo)
-//       ..initialize().then((_) {
-//         setState(() {});
-//         _cameraVideoPlayerController.play();
-//       });
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text("Image / Video Picker"),
-//       ),
-//       body: SingleChildScrollView(
-//         child: Center(
-//           child: Container(
-//             padding: const EdgeInsets.all(16.0),
-//             child: Column(
-//               children: <Widget>[
-//                 if (_galleryVideo != null)
-//                   _videoPlayerController.value.initialized
-//                       ? AspectRatio(
-//                           aspectRatio: _videoPlayerController.value.aspectRatio,
-//                           child: VideoPlayer(_videoPlayerController),
-//                         )
-//                       : Container()
-//                 else
-//                   Text(
-//                     "Use camera to take video",
-//                     style: TextStyle(fontSize: 18.0),
-//                   ),
-//                 ElevatedButton(
-//                   onPressed: () {
-//                     _pickVideoFromCamera();
-//                   },
-//                   child: Icon(Icons.photo_camera),
-//                 ),
-//                 if (_cameraVideo != null)
-//                   _cameraVideoPlayerController.value.initialized
-//                       ? AspectRatio(
-//                           aspectRatio:
-//                               _cameraVideoPlayerController.value.aspectRatio,
-//                           child: VideoPlayer(_cameraVideoPlayerController),
-//                         )
-//                       : Container()
-//                 else
-//                   Text(
-//                     "Choose video from photo library",
-//                     style: TextStyle(fontSize: 18.0),
-//                   ),
-//                 ElevatedButton(
-//                   onPressed: () {
-//                     _pickVideoFromGallery();
-//                   },
-//                   child: Icon(Icons.photo_library),
-//                 )
-//               ],
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
+ class CameraScreen extends StatefulWidget {
+   @override
+   _CameraScreenState createState() => _CameraScreenState();
+ }
 
+ class _CameraScreenState extends State<CameraScreen> {
+   File _galleryVideo;
+   File _cameraVideo;
+
+   ImagePicker picker = ImagePicker();
+
+   VideoPlayerController _videoPlayerController;
+   VideoPlayerController _cameraVideoPlayerController;
+
+   // This funcion will helps you to pick a Video File
+   _pickVideoFromGallery() async {
+     PickedFile pickedFile = await picker.getVideo(source: ImageSource.gallery);
+
+     _galleryVideo = File(pickedFile.path);
+
+     _videoPlayerController = VideoPlayerController.file(_galleryVideo)
+       ..initialize().then((_) {
+         setState(() {});
+         _videoPlayerController.play();
+       });
+   }
+
+   // This funcion will helps you to pick a Video File from Camera
+   _pickVideoFromCamera() async {
+     PickedFile pickedFile = await picker.getVideo(source: ImageSource.camera);
+
+     _cameraVideo = File(pickedFile.path);
+
+     _cameraVideoPlayerController = VideoPlayerController.file(_cameraVideo)
+       ..initialize().then((_) {
+         setState(() {});
+         _cameraVideoPlayerController.play();
+       });
+   }
+
+   @override
+   Widget build(BuildContext context) {
+     return Scaffold(
+       appBar: AppBar(
+         title: Text("Record a Video",
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: "Ubuntu",
+            fontWeight: FontWeight.bold,
+            fontSize: 37,
+          ),
+        ),
+       ),
+       body: SingleChildScrollView(
+         child: Center(
+           child: Container(
+             padding: const EdgeInsets.all(16.0),
+             child: Column(
+
+             ),
+           ),
+         ),
+       ),
+     );
+   }
+ }
+*/
 /*
 import 'dart:io';
 

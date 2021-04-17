@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:traffic_counting_project/camera_screen.dart';
 import 'package:traffic_counting_project/dashboard.dart';
 import 'package:traffic_counting_project/loading_screen.dart';
+import 'package:video_player/video_player.dart';
 
 class TrafficHomeScreen extends StatefulWidget {
   @override
@@ -9,12 +13,98 @@ class TrafficHomeScreen extends StatefulWidget {
 }
 //hello-----
 
-class _TrafficHomeScreenState extends State<TrafficHomeScreen> {
+
+class _TrafficHomeScreenState extends State<TrafficHomeScreen> with TickerProviderStateMixin {
+  Animation<Color> animationGreen;
+  AnimationController controllerGreen;
+
+  Animation<Color> animationYellow;
+  AnimationController controllerYellow;
+
+  Animation<Color> animationRed;
+  AnimationController controllerRed;
+
+  File _cameraVideo;
+  VideoPlayerController _cameraVideoPlayerController;
+  ImagePicker picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+
+    controllerGreen =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 1400));
+    animationGreen = ColorTween(begin: Colors.green[700], end: Colors.lightGreenAccent).animate(controllerGreen)
+      ..addListener(() {
+        setState(() {});
+      })
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          controllerGreen.reverse();
+        } else if (status == AnimationStatus.dismissed) {
+          controllerGreen.forward();
+        }
+      });
+
+    controllerGreen.forward();
+
+    controllerYellow =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 1200));
+    animationYellow = ColorTween(begin: Colors.orange, end: Colors.yellowAccent).animate(controllerYellow)
+      ..addListener(() {
+        setState(() {});
+      })
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          controllerYellow.reverse();
+        } else if (status == AnimationStatus.dismissed) {
+          controllerYellow.forward();
+        }
+      });
+
+    controllerYellow.forward();
+
+    controllerRed =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 1000));
+    animationRed = ColorTween(begin: Colors.red[800], end: Colors.pinkAccent).animate(controllerRed)
+      ..addListener(() {
+        setState(() {});
+      })
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          controllerRed.reverse();
+        } else if (status == AnimationStatus.dismissed) {
+          controllerRed.forward();
+        }
+      });
+
+    controllerRed.forward();
+  }
+
+  _pickVideoFromCamera() async {
+    PickedFile pickedFile = await picker.getVideo(source: ImageSource.camera);
+
+    _cameraVideo = File(pickedFile.path);
+
+    _cameraVideoPlayerController = VideoPlayerController.file(_cameraVideo)
+      ..initialize().then((_) {
+        setState(() {});
+        _cameraVideoPlayerController.play();
+      });
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CameraScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Navigation"),
+        title: Text(
+          "Countify+",
+          style: TextStyle(fontFamily: "Chicle", fontSize: 40),
+        ),
         backgroundColor: Color(0xFF3594DD),
         leading: GestureDetector(
           onTap: () {
@@ -24,7 +114,8 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> {
             );
           },
           child: Icon(
-            Icons.bar_chart, // add custom icons also
+            Icons.bar_chart,
+            color: Colors.orangeAccent, // add custom icons also
           ),
         ),
       ),
@@ -46,26 +137,28 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> {
             ),
           ),
           Container(
+            padding: EdgeInsets.only(top: 30),
             height: MediaQuery.of(context).size.width * .2,
             alignment: Alignment.center,
             child: Text(
-              "Countify",
+              "Ready... Steady... GO!",
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white, fontSize: 30),
+              style: TextStyle(
+                  color: Colors.white, fontSize: 30, fontFamily: "Ubuntu"),
             ),
           ),
           Center(
             child: Container(
-              height: 200,
-              width: 100,
+              height: 300,
+              width: 150,
               child: Stack(
                 children: [
                   Container(
                     //  alignment: Alignment.center,
-                    height: 200,
-                    width: 100,
+                    height: 300,
+                    width: 150,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30.0),
+                      borderRadius: BorderRadius.circular(40.0),
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
@@ -82,38 +175,38 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> {
                   Column(
                     children: <Widget>[
                       Padding(
-                        padding: EdgeInsets.only(left: 27, top: 20),
+                        padding: EdgeInsets.only(left: 40.25, top: 20),
                         child: Container(
                           alignment: Alignment.topCenter,
-                          height: 45,
-                          width: 45,
+                          height: 67.5,
+                          width: 67.5,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(100.0),
-                            color: Colors.red,
+                            color: animationRed.value,
                           ),
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(left: 27, top: 15),
+                        padding: EdgeInsets.only(left: 40.25, top: 20),
                         child: Container(
                           alignment: Alignment.topCenter,
-                          height: 45,
-                          width: 45,
+                          height: 67.5,
+                          width: 67.5,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(100.0),
-                            color: Colors.orange,
+                            color: animationYellow.value,
                           ),
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(left: 27, top: 15),
+                        padding: EdgeInsets.only(left: 40.25, top: 20),
                         child: Container(
                           alignment: Alignment.topCenter,
-                          height: 45,
-                          width: 45,
+                          height: 67.5,
+                          width: 67.5,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(100.0),
-                            color: Colors.green,
+                            color: animationGreen.value,
                           ),
                         ),
                       ),
@@ -123,33 +216,66 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> {
               ),
             ),
           ),
+          SizedBox(
+            width: double.infinity,
+            height: 5,
+            child: const DecoratedBox(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                  colors: [
+                    Colors.red,
+                    Colors.green,
+                  ],
+                ),
+              ),
+            ),
+          ),
           InkWell(
               child: Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
                   color: Colors.white60,
                   width: double.infinity,
-                  height: 50,
+                  height: 80,
                   child: Center(
                     child: Text(
                       'Get started',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 25,
+                        fontFamily: "Ubuntu",
+                        fontWeight: FontWeight.bold,
+                        fontSize: 37,
                       ),
                     ),
                   ),
                 ),
               ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => CameraScreen()),
-                );
-              }),
+              onTap: (){
+                Navigator.push(context, _pickVideoFromCamera());
+              }
+          ),
         ],
       ),
     );
   }
+
+  @override
+  void dispose() {
+    controllerRed.dispose();
+    controllerGreen.dispose();
+    controllerYellow.dispose();
+    super.dispose();
+  }
 }
-//------------------------------------------------------ Lola
+//--------------------------Jack
+
+/*
+{
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CameraScreen()),
+                );
+              }
+ */
