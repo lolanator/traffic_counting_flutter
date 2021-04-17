@@ -104,7 +104,7 @@ class _DashBoardState extends State<DashBoard>
                   child: CustomPaint(
                     painter: GraphPainter.drawBarChart(
                         _points, 12, _t, currVehicle, _images, _vehicleNo),
-                    size: Size(vw(.95), vh(.5)),
+                    size: Size(vw(.9), vh(.5)),
                   ),
                 ),
               )

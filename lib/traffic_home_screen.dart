@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:traffic_counting_project/camera_screen.dart';
 import 'package:traffic_counting_project/dashboard.dart';
 import 'package:traffic_counting_project/loading_screen.dart';
+import 'package:video_player/video_player.dart';
 
 class TrafficHomeScreen extends StatefulWidget {
   @override
@@ -19,6 +23,10 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> with TickerProvid
 
   Animation<Color> animationRed;
   AnimationController controllerRed;
+
+  File _cameraVideo;
+  VideoPlayerController _cameraVideoPlayerController;
+  ImagePicker picker = ImagePicker();
 
   @override
   void initState() {
@@ -71,6 +79,22 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> with TickerProvid
       });
 
     controllerRed.forward();
+  }
+
+  _pickVideoFromCamera() async {
+    PickedFile pickedFile = await picker.getVideo(source: ImageSource.camera);
+
+    _cameraVideo = File(pickedFile.path);
+
+    _cameraVideoPlayerController = VideoPlayerController.file(_cameraVideo)
+      ..initialize().then((_) {
+        setState(() {});
+        _cameraVideoPlayerController.play();
+      });
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CameraScreen()),
+    );
   }
 
   @override
@@ -228,12 +252,10 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> with TickerProvid
                   ),
                 ),
               ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => CameraScreen()),
-                );
-              }),
+              onTap: (){
+                Navigator.push(context, _pickVideoFromCamera());
+              }
+          ),
         ],
       ),
     );
@@ -248,3 +270,12 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> with TickerProvid
   }
 }
 //--------------------------Jack
+
+/*
+{
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CameraScreen()),
+                );
+              }
+ */
