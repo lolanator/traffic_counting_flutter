@@ -7,6 +7,8 @@ import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'dart:typed_data';
 
 class DashBoard extends StatefulWidget {
+  final List<int> nums;
+  const DashBoard({Key key, this.nums}) : super(key: key);
   @override
   _DashBoardState createState() => _DashBoardState();
 }
@@ -16,7 +18,7 @@ class _DashBoardState extends State<DashBoard>
   BuildContext _context;
   Animation<double> _animation;
   AnimationController _controller;
-  List<int> _points = [10, 2, 0, 1];
+  List<int> _points;
   double _t = 0;
   List<ui.Image> _images = [null, null, null, null];
   int _vehicleNo = 0;
@@ -24,6 +26,7 @@ class _DashBoardState extends State<DashBoard>
   @override
   void initState() {
     super.initState();
+    _points = widget.nums;
     _loadImages("car.png", 0);
     _loadImages("bike.png", 1);
     _loadImages("school-bus.png", 2);
@@ -103,7 +106,12 @@ class _DashBoardState extends State<DashBoard>
                   width: vw(.8),
                   child: CustomPaint(
                     painter: GraphPainter.drawBarChart(
-                        _points, 12, _t, currVehicle, _images, _vehicleNo),
+                        _points,
+                        getMax(_points) + 4,
+                        _t,
+                        currVehicle,
+                        _images,
+                        _vehicleNo),
                     size: Size(vw(.9), vh(.5)),
                   ),
                 ),
@@ -111,6 +119,12 @@ class _DashBoardState extends State<DashBoard>
             ],
           )),
     );
+  }
+
+  int getMax(List<int> l) {
+    int max = l[0];
+    for (int i = 1; i < l.length; i++) if (l[i] > max) max = l[i];
+    return max;
   }
 
   double vw(double ratio) {
@@ -171,7 +185,9 @@ class _DashBoardState extends State<DashBoard>
                 _vehicleNo = index;
                 _controller.stop();
                 _t = 0;
-                _controller.duration = Duration(milliseconds: (_points[index == _points.length ? 0 : index] ~/ 0.02));
+                _controller.duration = Duration(
+                    milliseconds:
+                        (_points[index == _points.length ? 0 : index] ~/ 0.02));
                 _controller.reset();
                 _controller.forward();
               });

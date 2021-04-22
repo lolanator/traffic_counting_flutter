@@ -1,11 +1,13 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:traffic_counting_project/camera_screen.dart';
 import 'package:traffic_counting_project/dashboard.dart';
-import 'package:traffic_counting_project/loading_screen.dart';
+// import 'package:traffic_counting_project/loading_screen.dart';
 import 'package:video_player/video_player.dart';
+import 'package:traffic_counting_project/send_video.dart';
 
 class TrafficHomeScreen extends StatefulWidget {
   @override
@@ -13,8 +15,8 @@ class TrafficHomeScreen extends StatefulWidget {
 }
 //hello-----
 
-
-class _TrafficHomeScreenState extends State<TrafficHomeScreen> with TickerProviderStateMixin {
+class _TrafficHomeScreenState extends State<TrafficHomeScreen>
+    with TickerProviderStateMixin {
   Animation<Color> animationGreen;
   AnimationController controllerGreen;
 
@@ -27,65 +29,69 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> with TickerProvid
   File _cameraVideo;
   VideoPlayerController _cameraVideoPlayerController;
   ImagePicker picker = ImagePicker();
-
+  List<int> _vals = [0, 0, 0, 0];
   @override
   void initState() {
     super.initState();
 
-    controllerGreen =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 1400));
-    animationGreen = ColorTween(begin: Colors.green[700], end: Colors.lightGreenAccent).animate(controllerGreen)
-      ..addListener(() {
-        setState(() {});
-      })
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          controllerGreen.reverse();
-        } else if (status == AnimationStatus.dismissed) {
-          controllerGreen.forward();
-        }
-      });
+    controllerGreen = AnimationController(
+        vsync: this, duration: Duration(milliseconds: 1400));
+    animationGreen =
+        ColorTween(begin: Colors.green[700], end: Colors.lightGreenAccent)
+            .animate(controllerGreen)
+              ..addListener(() {
+                setState(() {});
+              })
+              ..addStatusListener((status) {
+                if (status == AnimationStatus.completed) {
+                  controllerGreen.reverse();
+                } else if (status == AnimationStatus.dismissed) {
+                  controllerGreen.forward();
+                }
+              });
 
     controllerGreen.forward();
 
-    controllerYellow =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 1200));
-    animationYellow = ColorTween(begin: Colors.orange, end: Colors.yellowAccent).animate(controllerYellow)
-      ..addListener(() {
-        setState(() {});
-      })
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          controllerYellow.reverse();
-        } else if (status == AnimationStatus.dismissed) {
-          controllerYellow.forward();
-        }
-      });
+    controllerYellow = AnimationController(
+        vsync: this, duration: Duration(milliseconds: 1200));
+    animationYellow = ColorTween(begin: Colors.orange, end: Colors.yellowAccent)
+        .animate(controllerYellow)
+          ..addListener(() {
+            setState(() {});
+          })
+          ..addStatusListener((status) {
+            if (status == AnimationStatus.completed) {
+              controllerYellow.reverse();
+            } else if (status == AnimationStatus.dismissed) {
+              controllerYellow.forward();
+            }
+          });
 
     controllerYellow.forward();
 
-    controllerRed =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 1000));
-    animationRed = ColorTween(begin: Colors.red[800], end: Colors.pinkAccent).animate(controllerRed)
-      ..addListener(() {
-        setState(() {});
-      })
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          controllerRed.reverse();
-        } else if (status == AnimationStatus.dismissed) {
-          controllerRed.forward();
-        }
-      });
+    controllerRed = AnimationController(
+        vsync: this, duration: Duration(milliseconds: 1000));
+    animationRed = ColorTween(begin: Colors.red[800], end: Colors.pinkAccent)
+        .animate(controllerRed)
+          ..addListener(() {
+            setState(() {});
+          })
+          ..addStatusListener((status) {
+            if (status == AnimationStatus.completed) {
+              controllerRed.reverse();
+            } else if (status == AnimationStatus.dismissed) {
+              controllerRed.forward();
+            }
+          });
 
     controllerRed.forward();
   }
 
   _pickVideoFromCamera() async {
     PickedFile pickedFile = await picker.getVideo(source: ImageSource.camera);
-
     _cameraVideo = File(pickedFile.path);
-
+    Uint8List bytes = await _cameraVideo.readAsBytes();
+    _vals = await sendVideo(bytes);
     _cameraVideoPlayerController = VideoPlayerController.file(_cameraVideo)
       ..initialize().then((_) {
         setState(() {});
@@ -93,7 +99,7 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> with TickerProvid
       });
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => CameraScreen()),
+      MaterialPageRoute(builder: (context) => DashBoard(nums: _vals)),
     );
   }
 
@@ -110,7 +116,7 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> with TickerProvid
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => DashBoard()),
+              MaterialPageRoute(builder: (context) => DashBoard(nums: _vals)),
             );
           },
           child: Icon(
@@ -252,10 +258,9 @@ class _TrafficHomeScreenState extends State<TrafficHomeScreen> with TickerProvid
                   ),
                 ),
               ),
-              onTap: (){
+              onTap: () {
                 Navigator.push(context, _pickVideoFromCamera());
-              }
-          ),
+              }),
         ],
       ),
     );

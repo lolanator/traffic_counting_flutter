@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+// import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:splashscreen/splashscreen.dart';
 import 'package:traffic_counting_project/dashboard.dart';
 
@@ -14,7 +14,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
   Widget build(BuildContext context) {
     return SplashScreen(
       seconds: 5,
-      navigateAfterSeconds: DashBoard(),
+      navigateAfterSeconds: DashBoard(nums: [0, 0, 0, 0]),
       gradientBackground: LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,

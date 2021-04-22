@@ -1,10 +1,10 @@
-import 'dart:ffi';
-import 'dart:io';
+// import 'dart:ffi';
+// import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+// import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
-import 'package:traffic_counting_project/dashboard.dart';
+// import 'package:traffic_counting_project/dashboard.dart';
 import 'package:traffic_counting_project/loading_screen.dart';
 
 
@@ -21,7 +21,6 @@ class _CameraScreenState extends State<CameraScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     controller = VideoPlayerController.asset("assets/results.mp4");
     initializeVideoPlayerFuture = controller.initialize();
     controller.setLooping(false);
